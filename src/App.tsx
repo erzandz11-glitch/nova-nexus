@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 
 import { TelegramIcon, DiscordIcon } from './components/SocialIcons';
+import { NovaEcosystemSwitcher } from './components/NovaEcosystemSwitcher';
 
 import { 
   User, 
@@ -656,6 +657,8 @@ export default function App() {
 
             {/* Zone 3: Right Cluster */}
             <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+              
+              <NovaEcosystemSwitcher currentId="community" />
               
               {/* Back to Feed button if in Arena view */}
               {activeView === 'arena' && (
