@@ -366,13 +366,13 @@ export default function App() {
           {/* Syndicate Wordmark & Header */}
           <div className="h-16 px-5 border-b border-zinc-800/80 flex items-center justify-between shrink-0 bg-black/30">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-b from-zinc-800 to-zinc-950 border border-amber-500/40 flex items-center justify-center shadow-sm">
-                <span className="font-sans text-xs font-extrabold text-amber-400 tracking-wider">NV</span>
+              <div className="w-9 h-9 rounded-full p-[1px] bg-gradient-to-tr from-cyan-400 via-blue-500 to-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+                <img src="/nova-logo.jpg" alt="NOVA Logo" className="w-full h-full object-cover rounded-full scale-105" />
               </div>
               <div>
                 <div className="font-sans text-sm font-extrabold tracking-tight text-zinc-100 flex items-center gap-1.5">
                   <span>NOVA</span>
-                  <span className="text-xs text-amber-400 font-mono font-medium">SYNDICATE</span>
+                  <span className="text-xs text-amber-400 font-mono font-medium">COMMUNITY</span>
                 </div>
                 <div className="text-xs text-zinc-400 font-normal">Private Creator Guild</div>
               </div>
