@@ -1,0 +1,6 @@
+{
+  "name": "NOVA COMMUNITY",
+  "description": "Ultra-exclusive private club and gamified leaderboard arena for high-ticket creators.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
