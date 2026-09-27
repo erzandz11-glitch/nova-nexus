@@ -672,6 +672,22 @@ export default function App() {
             {/* Zone 3: Right Cluster */}
             <div className="flex items-center gap-2 sm:gap-3 shrink-0">
               
+              {/* Universal Command Trigger Button (Mobile & Desktop) */}
+              <button
+                onClick={() => {
+                  sounds.playClick();
+                  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true }));
+                }}
+                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-zinc-900/60 hover:bg-zinc-850 border border-amber-500/40 hover:border-amber-400 text-xs font-mono text-amber-300 hover:text-white transition shadow-sm cursor-pointer"
+                title="Open Universal Command Search (⌘K)"
+              >
+                <Search className="w-3.5 h-3.5 text-amber-400" />
+                <span className="hidden sm:inline">Search</span>
+                <kbd className="px-1.5 py-0.2 rounded bg-black/50 text-[10px] text-amber-300 border border-amber-500/30">
+                  ⌘K
+                </kbd>
+              </button>
+
               <NovaEcosystemSwitcher currentId="community" />
               
               {/* Back to Feed button if in Arena view */}
@@ -789,6 +805,21 @@ export default function App() {
               </button>
             </div>
           </header>
+
+          {/* Context Breadcrumbs Sub-Bar */}
+          <div className="border-b border-amber-900/30 bg-[#04060c]/90 px-4 sm:px-6 py-1.5 flex items-center overflow-x-auto no-scrollbar gap-1.5 text-[11px] font-mono text-zinc-400 shrink-0">
+            <span className="text-zinc-600 shrink-0 font-bold">NOVA OS</span>
+            <span className="text-zinc-700 shrink-0">/</span>
+            <span className="text-amber-400 font-semibold shrink-0">COMMUNITY</span>
+            <span className="text-zinc-700 shrink-0">/</span>
+            <span className="text-zinc-200 font-semibold shrink-0 uppercase">
+              {activeView === 'arena' ? 'THE ARENA' : activeChannel.name.toUpperCase()}
+            </span>
+            <span className="text-zinc-700 shrink-0">/</span>
+            <span className="text-zinc-400 shrink-0">
+              {activeView === 'arena' ? 'LEADERBOARD' : 'FEED'}
+            </span>
+          </div>
 
           {/* Content View: The Arena OR Active Channel Feed */}
           <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-5 sm:py-6 w-full">
