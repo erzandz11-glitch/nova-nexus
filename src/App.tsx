@@ -33,6 +33,9 @@ import {
 import { TelegramIcon, DiscordIcon } from './components/SocialIcons';
 import { NovaEcosystemSwitcher } from './components/NovaEcosystemSwitcher';
 import { NovaOnboardingQuest } from './components/NovaOnboardingQuest';
+import { NovaCommandSurface } from './nova-os/NovaCommandSurface';
+import { NovaKeyboardRouter } from './nova-os/novaKeyboard';
+import { NovaStateManager } from './nova-os/novaState';
 
 import { 
   User, 
@@ -95,7 +98,17 @@ export default function App() {
   const [isDealRoomOpen, setIsDealRoomOpen] = useState<boolean>(false);
   const [isNotifOpen, setIsNotifOpen] = useState<boolean>(false);
   const [isTokenGateOpen, setIsTokenGateOpen] = useState<boolean>(false);
+  const [isCommandOpen, setIsCommandOpen] = useState<boolean>(false);
   const [selectedProfileUser, setSelectedProfileUser] = useState<User | null>(null);
+
+  // Record session & attach global keyboard router (⌘K + G sequences)
+  useEffect(() => {
+    NovaStateManager.recordActivity('community', window.location.href, 'NOVA Community Syndicate');
+    const cleanup = NovaKeyboardRouter.attach({
+      onOpenCommandSurface: () => setIsCommandOpen(true),
+    });
+    return cleanup;
+  }, []);
 
   // Mobile & Tablet Drawer Toggles (<1024px and <1280px)
   const [isMobileNavOpen, setIsMobileNavOpen] = useState<boolean>(false);
@@ -1140,6 +1153,13 @@ export default function App() {
 
       {/* Interactive Ecosystem Quest */}
       <NovaOnboardingQuest />
+
+      {/* Universal ⌘K Command Surface */}
+      <NovaCommandSurface
+        isOpen={isCommandOpen}
+        onClose={() => setIsCommandOpen(false)}
+        currentEnvironment="community"
+      />
 
     </div>
   );
