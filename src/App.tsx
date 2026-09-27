@@ -36,6 +36,7 @@ import { NovaOnboardingQuest } from './components/NovaOnboardingQuest';
 import { NovaCommandSurface } from './nova-os/NovaCommandSurface';
 import { NovaKeyboardRouter } from './nova-os/novaKeyboard';
 import { NovaStateManager } from './nova-os/novaState';
+import { NovaIdentityControl } from './nova-os/NovaIdentityControl';
 
 import { 
   User, 
@@ -739,6 +740,9 @@ export default function App() {
                   <VolumeX className="w-4 h-4 text-zinc-500" />
                 )}
               </button>
+
+              {/* Canonical NOVA ID & Google Auth */}
+              <NovaIdentityControl />
 
               {/* Notification Center Trigger */}
               <div className="relative shrink-0">

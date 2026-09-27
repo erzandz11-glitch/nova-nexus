@@ -11,6 +11,7 @@ import {
 import { NOVA_ENVIRONMENTS } from './novaRegistry';
 import { NovaNavigationProps } from './novaNavTypes';
 import { NovaEnvironment } from './novaTypes';
+import { NovaIdentityControl } from './NovaIdentityControl';
 
 export const NovaNavigationLayer: React.FC<NovaNavigationProps> = ({
   currentEnvironment = 'community',
@@ -264,7 +265,9 @@ export const NovaNavigationLayer: React.FC<NovaNavigationProps> = ({
                 </span>
               )}
             </div>
-          ) : null}
+          ) : (
+            <NovaIdentityControl />
+          )}
         </div>
       </div>
 

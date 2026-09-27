@@ -1,4 +1,4 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient, Session } from '@supabase/supabase-js';
 import { NovaEnvironment } from './novaTypes';
 
 export interface NovaUserProfile {
@@ -34,11 +34,20 @@ export interface NovaContinuityRecord {
 }
 
 const getSupabaseCredentials = () => {
+  // Check process.env (Next.js & Node)
+  if (typeof process !== 'undefined' && process.env) {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+    if (url && key && url.startsWith('https://')) {
+      return { url, key };
+    }
+  }
+  // Check Vite import.meta
   try {
     // @ts-ignore
-    const metaUrl = import.meta.env?.VITE_SUPABASE_URL || process.env?.NEXT_PUBLIC_SUPABASE_URL;
+    const metaUrl = import.meta.env?.VITE_SUPABASE_URL || import.meta.env?.NEXT_PUBLIC_SUPABASE_URL;
     // @ts-ignore
-    const metaKey = import.meta.env?.VITE_SUPABASE_ANON_KEY || process.env?.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const metaKey = import.meta.env?.VITE_SUPABASE_ANON_KEY || import.meta.env?.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     if (metaUrl && metaKey && metaUrl.startsWith('https://')) {
       return { url: metaUrl, key: metaKey };
     }
@@ -58,6 +67,7 @@ export const getNovaSupabaseClient = (): SupabaseClient | null => {
       auth: {
         persistSession: true,
         autoRefreshToken: true,
+        detectSessionInUrl: true,
       },
     });
     return cachedClient;
@@ -66,22 +76,36 @@ export const getNovaSupabaseClient = (): SupabaseClient | null => {
 };
 
 export class NovaIdentityService {
-  static async signInWithGoogle(redirectTo?: string): Promise<{ error?: any }> {
+  static isConfigured(): boolean {
+    return getNovaSupabaseClient() !== null;
+  }
+
+  /**
+   * Universal Google OAuth 2.0 PKCE Sign In
+   */
+  static async signInWithGoogle(redirectTo?: string): Promise<{ error?: any; url?: string }> {
     const client = getNovaSupabaseClient();
     if (!client) {
-      console.warn('[NOVA ID] Supabase unconfigured, falling back to local simulation');
-      return {};
+      console.warn('[NOVA ID] Supabase credentials unconfigured in environment.');
+      return { error: new Error('Supabase client is not configured') };
     }
     const redirect = redirectTo || (typeof window !== 'undefined' ? window.location.origin : '');
-    const { error } = await client.auth.signInWithOAuth({
+    const { data, error } = await client.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: redirect,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
       },
     });
-    return { error };
+    return { error, url: data?.url };
   }
 
+  /**
+   * Global Sign Out
+   */
   static async signOut(): Promise<void> {
     const client = getNovaSupabaseClient();
     if (client) {
@@ -92,6 +116,34 @@ export class NovaIdentityService {
     }
   }
 
+  /**
+   * Subscribe to Auth Session changes with real-time profile resolution
+   */
+  static onAuthStateChange(
+    callback: (event: string, session: Session | null, profile: NovaUserProfile | null) => void
+  ): () => void {
+    const client = getNovaSupabaseClient();
+    if (!client) {
+      return () => {};
+    }
+
+    const { data: { subscription } } = client.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        const profile = await this.getUserProfile();
+        callback(event, session, profile);
+      } else {
+        callback(event, null, null);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }
+
+  /**
+   * Get Current Authenticated User Profile
+   */
   static async getUserProfile(): Promise<NovaUserProfile | null> {
     const client = getNovaSupabaseClient();
     if (!client) return null;
@@ -99,30 +151,39 @@ export class NovaIdentityService {
     const { data: { session } } = await client.auth.getSession();
     if (!session?.user) return null;
 
-    const { data } = await client
-      .from('profiles')
-      .select('*')
-      .eq('id', session.user.id)
-      .single();
+    try {
+      const { data, error } = await client
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
 
-    if (data) {
-      return {
-        id: data.id,
-        email: data.email,
-        displayName: data.display_name,
-        avatarUrl: data.avatar_url,
-        walletAddress: data.wallet_address,
-        tierRank: data.tier_rank,
-      };
+      if (data && !error) {
+        return {
+          id: data.id,
+          email: data.email,
+          displayName: data.display_name,
+          avatarUrl: data.avatar_url,
+          walletAddress: data.wallet_address,
+          tierRank: data.tier_rank || 'Novice Observer',
+        };
+      }
+    } catch {
+      // Fallback
     }
+
     return {
       id: session.user.id,
       email: session.user.email,
-      displayName: session.user.user_metadata?.full_name || session.user.email,
+      displayName: session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email?.split('@')[0],
       avatarUrl: session.user.user_metadata?.avatar_url,
+      tierRank: 'Novice Observer',
     };
   }
 
+  /**
+   * Get Aggregated User Stats (Authoritative Global XP, Level, True Consecutive Streak)
+   */
   static async getUserStats(): Promise<NovaUserStats | null> {
     const client = getNovaSupabaseClient();
     if (!client) return null;
@@ -130,26 +191,33 @@ export class NovaIdentityService {
     const { data: { session } } = await client.auth.getSession();
     if (!session?.user) return null;
 
-    const { data } = await client
-      .from('nova_user_stats')
-      .select('*')
-      .eq('user_id', session.user.id)
-      .single();
+    try {
+      const { data, error } = await client
+        .from('nova_user_stats')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .single();
 
-    if (data) {
-      return {
-        userId: data.user_id,
-        displayName: data.display_name,
-        avatarUrl: data.avatar_url,
-        totalXp: data.total_xp || 0,
-        globalLevel: data.global_level || 1,
-        streakDays: data.streak_days || 0,
-        lastActiveAt: data.last_active_at,
-      };
+      if (data && !error) {
+        return {
+          userId: data.user_id,
+          displayName: data.display_name,
+          avatarUrl: data.avatar_url,
+          totalXp: data.total_xp || 0,
+          globalLevel: data.global_level || 1,
+          streakDays: data.streak_days || 0,
+          lastActiveAt: data.last_active_at,
+        };
+      }
+    } catch {
+      // Fallback
     }
     return null;
   }
 
+  /**
+   * Award XP Event via Server-Side Trusted RPC with Idempotency Key
+   */
   static async awardXP(
     actionType: string,
     environment: NovaEnvironment,
@@ -177,6 +245,9 @@ export class NovaIdentityService {
     return { success: true, awardedXp: data?.awarded_xp || amount };
   }
 
+  /**
+   * Record Pointer-Based Continuity ("Continue Where You Left Off")
+   */
   static async saveContinuity(
     record: NovaContinuityRecord
   ): Promise<boolean> {
@@ -195,7 +266,7 @@ export class NovaIdentityService {
         title: record.title,
         route: record.route,
         artifact_type: record.artifactType,
-        artifact_id: record.artifactId,
+        artifactId: record.artifactId,
         metadata: record.metadata || {},
         updated_at: new Date().toISOString(),
       }, { onConflict: 'user_id, target_environment' });
@@ -203,6 +274,9 @@ export class NovaIdentityService {
     return !error;
   }
 
+  /**
+   * Get Active Continuities for Current User
+   */
   static async getContinuities(): Promise<NovaContinuityRecord[]> {
     const client = getNovaSupabaseClient();
     if (!client) return [];
