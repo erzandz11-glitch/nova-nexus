@@ -32,6 +32,7 @@ import {
 
 import { TelegramIcon, DiscordIcon } from './components/SocialIcons';
 import { NovaEcosystemSwitcher } from './components/NovaEcosystemSwitcher';
+import { NovaOnboardingQuest } from './components/NovaOnboardingQuest';
 
 import { 
   User, 
@@ -1136,6 +1137,9 @@ export default function App() {
         currentUser={currentUser}
         onCommitAllocation={handleCommitAllocation}
       />
+
+      {/* Interactive Ecosystem Quest */}
+      <NovaOnboardingQuest />
 
     </div>
   );
