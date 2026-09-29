@@ -27,7 +27,11 @@ import {
   Volume2,
   VolumeX,
   Radio,
-  Briefcase
+  Briefcase,
+  Send,
+  Zap,
+  CheckCircle2,
+  Share2
 } from 'lucide-react';
 
 import { TelegramIcon, DiscordIcon } from './components/SocialIcons';
@@ -118,7 +122,7 @@ export default function App() {
   // Search & Filter in chat
   const [chatSearch, setChatSearch] = useState<string>('');
 
-  // Interactive Quick Dispatch input state (Requirement 3)
+  // Interactive Quick Dispatch input state
   const [quickDispatchText, setQuickDispatchText] = useState<string>('');
 
   // Unread notifications count
@@ -150,98 +154,58 @@ export default function App() {
         id: `tx-${Date.now()}`,
         timestamp: 'Just now',
         amount: randomAmount,
-        sender: '0x' + Math.random().toString(16).substring(2, 6) + '...' + Math.random().toString(16).substring(2, 6),
-        recipient: 'Apex Multi-Sig Escrow',
+        sender: '0x' + Math.random().toString(16).substring(2, 6).toUpperCase() + '...Nova',
+        recipient: 'OTC Escrow Pool',
         dealType: randomType,
         txHash: randomHash,
         nodeLocation: randomNode,
         status: 'Settled',
       };
 
-      setTransactions((prev) => [newTx, ...prev.slice(0, 14)]);
+      setTransactions((prev) => [newTx, ...prev.slice(0, 19)]);
     }, 12000);
 
     return () => clearInterval(interval);
   }, []);
 
-  // Supabase Real-time Synchronization across all connected users
-  useEffect(() => {
-    if (!isSupabaseConfigured) return;
-
-    // 1. Fetch persistent messages for active channel from Supabase
-    supabaseService.fetchMessages(activeChannelId).then((fetched) => {
-      if (fetched && fetched.length > 0) {
-        setMessages((prev) => ({
-          ...prev,
-          [activeChannelId]: fetched,
-        }));
-      }
-    });
-
-    // 2. Subscribe to real-time dispatches from other users
-    const unsubscribe = supabaseService.subscribeToDispatches((newMsg) => {
-      sounds.playChime();
-      setMessages((prev) => {
-        const list = prev[newMsg.channelId] || [];
-        if (list.some((m) => m.id === newMsg.id)) return prev;
-        return {
-          ...prev,
-          [newMsg.channelId]: [newMsg, ...list],
-        };
-      });
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, [activeChannelId]);
-
-  // Filtered messages
+  // Filter messages by channel & search
   const currentMessages = useMemo(() => {
-    const list = messages[activeChannelId] || [];
-    if (!chatSearch.trim()) return list;
-    return list.filter(
+    const channelMsgs = messages[activeChannelId] || [];
+    if (!chatSearch.trim()) return channelMsgs;
+    return channelMsgs.filter(
       (m) =>
         m.content.toLowerCase().includes(chatSearch.toLowerCase()) ||
-        m.author.name.toLowerCase().includes(chatSearch.toLowerCase()) ||
-        (m.title && m.title.toLowerCase().includes(chatSearch.toLowerCase()))
+        (m.title && m.title.toLowerCase().includes(chatSearch.toLowerCase())) ||
+        m.author.name.toLowerCase().includes(chatSearch.toLowerCase())
     );
   }, [messages, activeChannelId, chatSearch]);
 
-  // Categorized Members for Column 3
+  // Roster groupings for the Right Sidebar
   const boardMembers = useMemo(() => members.filter((m) => m.rank === 'The Board'), [members]);
   const architectMembers = useMemo(() => members.filter((m) => m.rank === 'Architects'), [members]);
   const regularMembers = useMemo(() => members.filter((m) => m.rank === 'Members'), [members]);
 
-  // Channel select with audio feedback and token gating
+  // Switch channel handler
   const handleSelectChannel = (channel: Channel) => {
     sounds.playClick();
-
-    // Check if channel is locked and not yet unlocked
     if (channel.isRestricted && !unlockedChannels.includes(channel.id)) {
       setTokenGatedChannel(channel);
       setIsTokenGateOpen(true);
       return;
     }
-
     setActiveChannelId(channel.id);
     setActiveView('feed');
     setIsMobileNavOpen(false);
-
-    // If selecting OTC Escrow Desk, open the Deal Room modal directly
-    if (channel.id === 'deal-room-closed') {
-      setIsDealRoomOpen(true);
-    }
   };
 
-  // Switch to Arena
+  // Open Arena View
   const handleOpenArena = () => {
     sounds.playClick();
     setActiveView('arena');
     setIsMobileNavOpen(false);
   };
 
-  // Return to feed
+  // Back to Feed handler
   const handleBackToFeed = () => {
     sounds.playClick();
     setActiveView('feed');
@@ -253,7 +217,7 @@ export default function App() {
     setAudioEnabled(state);
   };
 
-  // Add new dispatch post (Requirement 2)
+  // Add new dispatch post
   const handleCreatePost = (
     title: string,
     channelId: string,
@@ -281,13 +245,11 @@ export default function App() {
       [targetChannelId]: [newMsg, ...(prev[targetChannelId] || [])],
     }));
 
-    // If user posted into another channel, navigate there
     if (targetChannelId !== activeChannelId) {
       setActiveChannelId(targetChannelId);
     }
     setActiveView('feed');
 
-    // Also add to syndicate notifications
     setNotifications((prev) => [
       {
         id: `notif-${Date.now()}`,
@@ -300,13 +262,12 @@ export default function App() {
       ...prev,
     ]);
 
-    // Broadcast to Supabase PostgreSQL real-time cluster if configured
     if (isSupabaseConfigured) {
       supabaseService.sendDispatch(newMsg);
     }
   };
 
-  // Quick Dispatch Form Submission (Requirement 3: Interactive "+ Dispatch" bar)
+  // Quick Dispatch Form Submission
   const handleQuickDispatch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!quickDispatchText.trim()) return;
@@ -366,62 +327,71 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen w-full bg-[#080a0f] text-slate-100 overflow-hidden font-sans select-none antialiased">
+    <div className="flex flex-col h-screen w-full bg-[#06080e] text-slate-100 overflow-hidden font-sans select-none antialiased">
       
+      {/* Live Cyber Syndicate Escrow Ticker */}
+      <EscrowTicker 
+        transactions={transactions} 
+        onOpenDealRoom={() => setIsDealRoomOpen(true)} 
+      />
+
       {/* Main App Container */}
       <div className="flex-1 flex overflow-hidden relative">
 
         {/* ========================================================================= */}
-        {/* COLUMN 1: Channels List (Discord-Inspired Sleek Navigation)              */}
+        {/* COLUMN 1: Channels & Syndicate Hub                                        */}
         {/* ========================================================================= */}
         <aside
-          className={`fixed inset-y-0 left-0 z-40 w-[260px] bg-[#0b0e14] border-r border-white/[0.06] flex flex-col transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
-            isMobileNavOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'
+          className={`fixed inset-y-0 left-0 z-40 w-[280px] bg-[#090d16] border-r border-cyan-500/15 flex flex-col transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
+            isMobileNavOpen ? 'translate-x-0 shadow-[0_0_50px_rgba(0,0,0,0.8)]' : '-translate-x-full'
           }`}
         >
           {/* Syndicate Wordmark & Header */}
-          <div className="h-14 px-4 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-[#090b10]">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full p-[1px] bg-gradient-to-tr from-cyan-500/80 to-blue-500/40">
+          <div className="h-16 px-4 border-b border-cyan-500/15 flex items-center justify-between shrink-0 bg-[#070a10]">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full p-[1.5px] bg-gradient-to-tr from-cyan-400 via-sky-500 to-indigo-500 shadow-[0_0_15px_rgba(6,182,212,0.35)]">
                 <img src="/nova-logo.jpg" alt="NOVA Logo" className="w-full h-full object-cover rounded-full" />
               </div>
               <div>
-                <div className="font-sans text-sm font-bold tracking-tight text-white flex items-center gap-1.5">
+                <div className="font-sans text-sm font-extrabold tracking-tight text-white flex items-center gap-1.5">
                   <span>NOVA</span>
-                  <span className="text-[10px] text-cyan-400 font-mono font-medium px-1 py-0.2 rounded bg-cyan-400/10">COMMUNITY</span>
+                  <span className="text-[10px] text-cyan-400 font-mono font-semibold px-1.5 py-0.5 rounded bg-cyan-400/10 border border-cyan-500/20">
+                    SYNDICATE
+                  </span>
                 </div>
+                <div className="text-[11px] text-slate-400 font-medium">Private Creator Guild</div>
               </div>
             </div>
 
             {/* Close drawer on mobile */}
             <button
               onClick={() => setIsMobileNavOpen(false)}
-              className="lg:hidden p-1.5 text-zinc-400 hover:text-white cursor-pointer rounded-lg hover:bg-zinc-800"
+              className="lg:hidden p-1.5 text-slate-400 hover:text-white cursor-pointer rounded-lg hover:bg-slate-800/60"
               aria-label="Close navigation"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Channels Navigation Scroll */}
-          <div className="flex-1 overflow-y-auto px-2.5 py-3 space-y-5">
+          <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6 scrollbar-thin">
             
             {/* Quick Nav: The Arena Highlight Button */}
             <div>
               <button
                 onClick={handleOpenArena}
-                className={`w-full group flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                className={`w-full group relative flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all cursor-pointer ${
                   activeView === 'arena'
-                    ? 'bg-cyan-400/15 text-cyan-300 border border-cyan-500/30 shadow-sm'
-                    : 'bg-white/[0.03] hover:bg-white/[0.06] border border-transparent text-zinc-300 hover:text-white'
+                    ? 'bg-gradient-to-r from-cyan-500/25 via-cyan-500/15 to-transparent border border-cyan-400/50 text-cyan-300 shadow-[0_0_20px_rgba(6,182,212,0.25)]'
+                    : 'bg-slate-900/60 hover:bg-slate-850 border border-slate-800/80 hover:border-cyan-500/30 text-slate-300 hover:text-white'
                 }`}
               >
-                <div className="flex items-center gap-2">
-                  <Trophy className={`w-3.5 h-3.5 ${activeView === 'arena' ? 'text-cyan-400' : 'text-zinc-400 group-hover:text-cyan-400'}`} />
-                  <span className="tracking-wide">THE ARENA</span>
+                <div className="flex items-center gap-2.5">
+                  <Trophy className={`w-4 h-4 ${activeView === 'arena' ? 'text-cyan-400' : 'text-slate-400 group-hover:text-cyan-400'}`} />
+                  <span className="font-sans text-xs font-bold tracking-wider">THE ARENA</span>
                 </div>
-                <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-cyan-400/10 text-cyan-400">
-                  LIVE
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-cyan-400/10 text-cyan-300 border border-cyan-500/20">
+                  LIVE PODIUM
                 </span>
               </button>
             </div>
@@ -433,12 +403,12 @@ export default function App() {
               );
 
               return (
-                <div key={category} className="space-y-1">
-                  <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-zinc-500">
-                    {category}
+                <div key={category} className="space-y-1.5">
+                  <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+                    <span>{category}</span>
                   </div>
 
-                  <div className="space-y-0.5 pt-0.5">
+                  <div className="space-y-1 pt-0.5">
                     {channelGroup.map((channel) => {
                       const isActive = activeView === 'feed' && activeChannelId === channel.id;
                       const isLocked = channel.isRestricted && !unlockedChannels.includes(channel.id);
@@ -447,52 +417,100 @@ export default function App() {
                         <button
                           key={channel.id}
                           onClick={() => handleSelectChannel(channel)}
-                          className={`w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-medium transition-all text-left cursor-pointer group ${
+                          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all text-left cursor-pointer group ${
                             isActive
-                              ? 'bg-white/[0.08] text-white font-semibold'
-                              : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03]'
+                              ? 'bg-cyan-500/15 text-cyan-200 border border-cyan-500/30 font-semibold shadow-[0_0_15px_rgba(6,182,212,0.15)]'
+                              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50 border border-transparent'
                           }`}
                         >
-                          <div className="flex items-center gap-2 truncate">
-                            <span className="text-zinc-500 group-hover:text-zinc-400 text-sm shrink-0">#</span>
+                          <div className="flex items-center gap-2.5 truncate">
+                            <span className="text-sm shrink-0">{channel.symbol}</span>
                             <span className="truncate">{channel.name}</span>
                           </div>
 
                           {channel.unreadCount ? (
-                            <span className="shrink-0 text-[10px] px-1.5 py-0.2 rounded-full bg-cyan-500/20 text-cyan-300 font-semibold">
+                            <span className="shrink-0 text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-semibold">
                               {channel.unreadCount}
                             </span>
                           ) : isLocked ? (
-                            <Lock className="w-3 h-3 text-zinc-500 shrink-0" />
+                            <div className="flex items-center gap-1 text-[10px] text-cyan-400 font-semibold px-1.5 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20">
+                              <Lock className="w-3 h-3" />
+                              <span>VIP</span>
+                            </div>
                           ) : null}
                         </button>
                       );
                     })}
                   </div>
+
+                  {/* Direct Transmissions bridge inside sidebar */}
+                  {category === 'Alpha & Intelligence' && (
+                    <div className="pt-2 px-1 space-y-2">
+                      <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+                        <span className="flex items-center gap-1.5 text-cyan-400">
+                          <Radio className="w-3 h-3 text-cyan-400 animate-pulse" />
+                          DIRECT BRIDGES
+                        </span>
+                        <span className="text-[10px] text-emerald-400 font-mono font-medium">LIVE</span>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <a
+                          href="https://t.me/novasyndicate"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => sounds.playClick()}
+                          className="flex flex-col p-2 rounded-xl bg-slate-900/60 hover:bg-slate-850 border border-slate-800 hover:border-cyan-500/40 transition group"
+                        >
+                          <div className="flex items-center justify-between text-slate-400 group-hover:text-cyan-300 mb-1">
+                            <TelegramIcon className="w-4 h-4 fill-current" />
+                            <ExternalLink className="w-3 h-3 opacity-60" />
+                          </div>
+                          <span className="text-[11px] font-semibold text-white">Telegram</span>
+                          <span className="text-[9px] text-slate-400">Signals</span>
+                        </a>
+
+                        <a
+                          href="https://discord.gg/novasyndicate"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => sounds.playClick()}
+                          className="flex flex-col p-2 rounded-xl bg-slate-900/60 hover:bg-slate-850 border border-slate-800 hover:border-cyan-500/40 transition group"
+                        >
+                          <div className="flex items-center justify-between text-slate-400 group-hover:text-cyan-300 mb-1">
+                            <DiscordIcon className="w-4 h-4 fill-current" />
+                            <ExternalLink className="w-3 h-3 opacity-60" />
+                          </div>
+                          <span className="text-[11px] font-semibold text-white">Discord</span>
+                          <span className="text-[9px] text-slate-400">Voice Arena</span>
+                        </a>
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
 
-          {/* Column 1 Footer: Compact Discord-Style User Bar */}
-          <div className="p-2 border-t border-white/[0.06] bg-[#090b10] shrink-0">
+          {/* Column 1 Footer: Sovereign User Dossier */}
+          <div className="p-3 border-t border-cyan-500/15 bg-[#070a10] shrink-0">
             <div
               onClick={() => {
                 sounds.playClick();
                 setSelectedProfileUser(currentUser);
               }}
-              className="flex items-center justify-between p-1.5 rounded-lg hover:bg-white/[0.04] transition-all cursor-pointer"
+              className="flex items-center justify-between p-2 rounded-xl bg-slate-900/70 border border-slate-800 hover:border-cyan-500/40 transition-all cursor-pointer"
             >
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className={`relative w-8 h-8 rounded-full bg-gradient-to-br ${currentUser.avatarBg} border border-cyan-400/40 flex items-center justify-center text-xs font-bold text-white shrink-0`}>
+                <div className={`relative w-8 h-8 rounded-full bg-gradient-to-br ${currentUser.avatarBg} border border-cyan-400/50 flex items-center justify-center text-xs font-bold text-white shrink-0 shadow-sm`}>
                   {currentUser.initials}
-                  <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-[#090b10]" />
+                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-[#070a10]" />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-xs font-semibold text-white truncate">
+                  <div className="text-xs font-semibold text-white truncate flex items-center gap-1">
                     {currentUser.name}
                   </div>
-                  <div className="text-[10px] text-zinc-500 truncate">
+                  <div className="text-[10px] text-cyan-400/80 font-mono truncate">
                     {currentUser.passId}
                   </div>
                 </div>
@@ -504,93 +522,98 @@ export default function App() {
                   sounds.playClick();
                   setIsVIPModalOpen(true);
                 }}
-                title="Protocol Card / Sovereign Pass"
-                className="p-1.5 text-zinc-400 hover:text-cyan-300 rounded hover:bg-white/[0.06] transition-all cursor-pointer shrink-0"
+                title="Sovereign Pass Verification"
+                className="p-1.5 text-cyan-400 hover:text-cyan-300 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 transition cursor-pointer shrink-0"
               >
-                <ShieldCheck className="w-4 h-4 text-cyan-400" />
+                <ShieldCheck className="w-4 h-4" />
               </button>
             </div>
           </div>
         </aside>
 
-        {/* Backdrop overlay for mobile & tablet navigation drawer */}
+        {/* Backdrop overlay for mobile */}
         {isMobileNavOpen && (
           <div
             onClick={() => setIsMobileNavOpen(false)}
-            className="fixed inset-0 z-30 bg-black/75 backdrop-blur-sm lg:hidden animate-in fade-in duration-200"
+            className="fixed inset-0 z-30 bg-black/80 backdrop-blur-sm lg:hidden"
           />
         )}
 
         {/* ========================================================================= */}
-        {/* COLUMN 2: Middle Chat Stream / The Arena (Discord-Style Canvas)           */}
+        {/* COLUMN 2: Middle Cyber Syndicate Canvas                                   */}
         {/* ========================================================================= */}
-        <main className="flex-1 flex flex-col min-w-0 bg-[#080a0f] overflow-hidden relative w-full">
+        <main className="flex-1 flex flex-col min-w-0 bg-[#06080e] overflow-hidden relative w-full">
           
-          {/* Channel Top Bar */}
-          <header className="h-14 px-4 border-b border-white/[0.06] bg-[#0b0e14]/90 backdrop-blur-md flex items-center justify-between shrink-0 z-20 gap-3">
+          {/* Header Bar */}
+          <header className="h-16 px-4 sm:px-6 border-b border-cyan-500/15 bg-[#090d16]/90 backdrop-blur-md flex items-center justify-between shrink-0 z-20 gap-3">
             
-            {/* Left: Channel Title & Info */}
-            <div className="flex items-center gap-2.5 min-w-0">
+            {/* Left: Channel Info */}
+            <div className="flex items-center gap-3 min-w-0">
               <button
                 onClick={() => setIsMobileNavOpen(true)}
-                className="lg:hidden p-1.5 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800 cursor-pointer shrink-0"
+                className="lg:hidden p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 cursor-pointer shrink-0"
                 aria-label="Open channels"
               >
-                <Menu className="w-4 h-4" />
+                <Menu className="w-5 h-5" />
               </button>
 
-              <div className="flex items-center gap-2 min-w-0">
-                <span className="text-zinc-500 text-base shrink-0">
-                  {activeView === 'arena' ? '⚔️' : '#'}
+              <div className="flex items-center gap-2.5 min-w-0">
+                <span className="text-xl shrink-0">
+                  {activeView === 'arena' ? '⚔️' : activeChannel.symbol}
                 </span>
-                <div className="flex items-baseline gap-2 min-w-0">
-                  <h2 className="text-sm font-bold text-white tracking-tight truncate">
-                    {activeView === 'arena' ? 'The Arena' : activeChannel.name}
-                  </h2>
-                  <span className="text-xs text-zinc-400 font-normal truncate hidden sm:inline">
-                    {activeView === 'arena' ? 'Leaderboard & Revenue Volumes' : activeChannel.description}
-                  </span>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-sm font-bold text-white tracking-tight truncate">
+                      {activeView === 'arena' ? 'The Sovereign Arena' : activeChannel.name}
+                    </h2>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 shrink-0 hidden sm:inline">
+                      {activeView === 'arena' ? 'LEADERBOARD' : 'ACTIVE CHANNEL'}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 truncate hidden md:block">
+                    {activeView === 'arena' ? 'Verified creator revenue leaderboards & high-ticket OTC deal tranches.' : activeChannel.description}
+                  </p>
                 </div>
               </div>
             </div>
 
-            {/* Right: Quick Controls */}
+            {/* Right: Actions */}
             <div className="flex items-center gap-2 shrink-0">
               {/* Search Bar */}
               {activeView !== 'arena' && (
-                <div className="relative hidden md:block w-44 lg:w-56">
-                  <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <div className="relative hidden md:block w-48 lg:w-60">
+                  <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                   <input
                     type="text"
                     value={chatSearch}
                     onChange={(e) => setChatSearch(e.target.value)}
-                    placeholder="Search..."
-                    className="w-full pl-8 pr-3 py-1 bg-black/40 border border-white/[0.06] rounded-md text-xs text-zinc-200 placeholder:text-zinc-400 focus:outline-none focus:border-cyan-500/40"
+                    placeholder="Search alpha & members..."
+                    className="w-full pl-9 pr-3 py-1.5 bg-slate-900/80 border border-slate-800 hover:border-cyan-500/30 focus:border-cyan-400 rounded-xl text-xs text-slate-100 placeholder:text-slate-400 focus:outline-none transition shadow-inner"
                   />
                 </div>
               )}
 
-              {/* Back to Feed if in Arena */}
+              {/* Back to Feed Button if in Arena */}
               {activeView === 'arena' && (
                 <button
                   onClick={handleBackToFeed}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/[0.05] hover:bg-white/[0.08] text-zinc-300 hover:text-white text-xs font-medium transition cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-300 text-xs font-semibold transition cursor-pointer"
                 >
-                  <ArrowLeft className="w-3.5 h-3.5" />
-                  <span>Feed</span>
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Return to Feed</span>
                 </button>
               )}
 
               {/* Sound Toggle */}
               <button
                 onClick={handleToggleAudio}
-                className="p-1.5 text-zinc-400 hover:text-zinc-200 rounded-md hover:bg-white/[0.05] transition cursor-pointer"
-                title={audioEnabled ? 'Mute audio' : 'Unmute audio'}
+                className="p-2 text-slate-400 hover:text-cyan-300 rounded-xl bg-slate-900/60 hover:bg-slate-850 border border-slate-800 transition cursor-pointer"
+                title={audioEnabled ? 'Mute Audio' : 'Enable Audio'}
               >
                 {audioEnabled ? (
                   <Volume2 className="w-4 h-4 text-cyan-400" />
                 ) : (
-                  <VolumeX className="w-4 h-4 text-zinc-500" />
+                  <VolumeX className="w-4 h-4 text-slate-500" />
                 )}
               </button>
 
@@ -601,12 +624,12 @@ export default function App() {
                     sounds.playClick();
                     setIsNotifOpen(!isNotifOpen);
                   }}
-                  className="relative p-1.5 text-zinc-400 hover:text-zinc-200 rounded-md hover:bg-white/[0.05] transition cursor-pointer"
-                  title="Notifications"
+                  className="relative p-2 text-slate-400 hover:text-cyan-300 rounded-xl bg-slate-900/60 hover:bg-slate-850 border border-slate-800 transition cursor-pointer"
+                  title="Syndicate Notifications"
                 >
                   <Bell className="w-4 h-4" />
                   {unreadNotifCount > 0 && (
-                    <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-cyan-400 ring-2 ring-[#0b0e14]" />
+                    <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
                   )}
                 </button>
 
@@ -623,22 +646,22 @@ export default function App() {
               {/* Identity Control */}
               <NovaIdentityControl />
 
-              {/* Toggle Members Sidebar */}
+              {/* Mobile Members Toggle */}
               <button
                 onClick={() => {
                   sounds.playClick();
                   setIsMobileMembersOpen(!isMobileMembersOpen);
                 }}
-                className="p-1.5 text-zinc-400 hover:text-white rounded-md hover:bg-white/[0.05] transition cursor-pointer xl:hidden"
-                aria-label="Toggle members list"
+                className="p-2 text-slate-400 hover:text-white rounded-xl bg-slate-900/60 hover:bg-slate-850 border border-slate-800 transition cursor-pointer xl:hidden"
+                aria-label="Toggle syndicate members"
               >
                 <Users className="w-4 h-4" />
               </button>
             </div>
           </header>
 
-          {/* Main Feed / Content View */}
-          <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 space-y-4">
+          {/* Main Feed View Area */}
+          <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-6 space-y-5 scrollbar-thin">
             {activeView === 'arena' ? (
               <TheArena
                 entries={leaderboard}
@@ -648,8 +671,57 @@ export default function App() {
                 onBackToFeed={handleBackToFeed}
               />
             ) : (
-              <div className="max-w-4xl mx-auto space-y-3 pb-20">
-                {/* Messages list */}
+              <div className="max-w-4xl mx-auto space-y-5 pb-16">
+                
+                {/* Interactive Quick Dispatch Card at the top of the feed */}
+                <div className="rounded-2xl bg-gradient-to-b from-[#0e1422] to-[#0a0e18] border border-cyan-500/25 p-4 shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
+                  <form onSubmit={handleQuickDispatch} className="space-y-3">
+                    <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+                      <div className="flex items-center gap-2 text-xs font-bold text-cyan-300 tracking-wide uppercase">
+                        <Zap className="w-3.5 h-3.5 text-cyan-400" />
+                        <span>Dispatch Alpha to #{activeChannel.name}</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          sounds.playClick();
+                          setIsCreatePostOpen(true);
+                        }}
+                        className="text-[11px] font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1 cursor-pointer transition"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Rich Dispatch Editor</span>
+                      </button>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <div className={`w-9 h-9 rounded-full bg-gradient-to-br ${currentUser.avatarBg} border border-cyan-400/40 flex items-center justify-center text-xs font-bold text-white shrink-0`}>
+                        {currentUser.initials}
+                      </div>
+                      <input
+                        type="text"
+                        value={quickDispatchText}
+                        onChange={(e) => setQuickDispatchText(e.target.value)}
+                        placeholder={`Share confidential alpha, metrics, or insights with #${activeChannel.name}...`}
+                        className="flex-1 bg-slate-900/80 border border-slate-800 hover:border-slate-700 focus:border-cyan-400 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none transition shadow-inner"
+                      />
+                      <button
+                        type="submit"
+                        disabled={!quickDispatchText.trim()}
+                        className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
+                          quickDispatchText.trim()
+                            ? 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.4)]'
+                            : 'bg-slate-800 text-slate-500 opacity-50 cursor-not-allowed'
+                        }`}
+                      >
+                        <Send className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">Broadcast</span>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+
+                {/* Messages Feed Stream */}
                 {currentMessages.length > 0 ? (
                   currentMessages.map((message) => (
                     <FeedMessage
@@ -661,78 +733,38 @@ export default function App() {
                     />
                   ))
                 ) : (
-                  <div className="py-16 text-center space-y-2 text-zinc-500">
-                    <Sparkles className="w-6 h-6 mx-auto text-zinc-600" />
-                    <div className="text-sm font-medium text-zinc-400">No messages in this channel</div>
-                    <p className="text-xs text-zinc-500">Be the first to start the conversation!</p>
+                  <div className="py-20 text-center space-y-3 rounded-2xl bg-slate-900/30 border border-slate-800/80">
+                    <Sparkles className="w-8 h-8 mx-auto text-cyan-400/60" />
+                    <div className="text-sm font-bold text-white">No active transmissions in this channel</div>
+                    <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                      Be the first to broadcast a high-signal dispatch or market intelligence.
+                    </p>
                   </div>
                 )}
               </div>
             )}
           </div>
-
-          {/* Discord-Style Bottom Input Bar */}
-          {activeView === 'feed' && (
-            <div className="p-3 bg-[#080a0f] shrink-0">
-              <form
-                onSubmit={handleQuickDispatch}
-                className="max-w-4xl mx-auto rounded-xl bg-[#0e121a] border border-white/[0.06] focus-within:border-cyan-500/40 px-3.5 py-2.5 flex items-center gap-3 transition-colors shadow-sm"
-              >
-                {/* Attach / Create Full Post modal trigger */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    sounds.playClick();
-                    setIsCreatePostOpen(true);
-                  }}
-                  title="Attach metric or create rich post"
-                  className="p-1 text-zinc-400 hover:text-cyan-300 rounded hover:bg-white/[0.04] transition cursor-pointer"
-                >
-                  <Plus className="w-4 h-4" />
-                </button>
-
-                {/* Input Text */}
-                <input
-                  type="text"
-                  value={quickDispatchText}
-                  onChange={(e) => setQuickDispatchText(e.target.value)}
-                  placeholder={`Message #${activeChannel.name}...`}
-                  className="flex-1 bg-transparent text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none"
-                />
-
-                {/* Submit button */}
-                <button
-                  type="submit"
-                  disabled={!quickDispatchText.trim()}
-                  className={`p-1.5 rounded-lg transition-all cursor-pointer ${
-                    quickDispatchText.trim()
-                      ? 'bg-cyan-500 hover:bg-cyan-400 text-black shadow-sm'
-                      : 'text-zinc-600 cursor-not-allowed opacity-50'
-                  }`}
-                >
-                  <Send className="w-4 h-4" />
-                </button>
-              </form>
-            </div>
-          )}
         </main>
 
         {/* ========================================================================= */}
-        {/* COLUMN 3: Active Members Sidebar (Discord Style)                          */}
+        {/* COLUMN 3: Active Syndicate Members                                        */}
         {/* ========================================================================= */}
         <aside
-          className={`fixed inset-y-0 right-0 z-40 w-[240px] bg-[#0b0e14] border-l border-white/[0.06] flex flex-col transition-transform duration-300 ease-in-out xl:static xl:translate-x-0 ${
-            isMobileMembersOpen ? 'translate-x-0 shadow-2xl' : 'translate-x-full'
+          className={`fixed inset-y-0 right-0 z-40 w-[260px] bg-[#090d16] border-l border-cyan-500/15 flex flex-col transition-transform duration-300 ease-in-out xl:static xl:translate-x-0 ${
+            isMobileMembersOpen ? 'translate-x-0 shadow-[0_0_50px_rgba(0,0,0,0.8)]' : 'translate-x-full'
           }`}
         >
           {/* Header */}
-          <div className="h-14 px-4 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-[#090b10]">
-            <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">
-              Members — {members.length}
-            </span>
+          <div className="h-16 px-4 border-b border-cyan-500/15 flex items-center justify-between shrink-0 bg-[#070a10]">
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-cyan-400" />
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-200">
+                Syndicate Roster ({members.length})
+              </span>
+            </div>
             <button
               onClick={() => setIsMobileMembersOpen(false)}
-              className="xl:hidden p-1 text-zinc-400 hover:text-white cursor-pointer rounded hover:bg-zinc-800"
+              className="xl:hidden p-1.5 text-slate-400 hover:text-white cursor-pointer rounded-lg hover:bg-slate-800"
               aria-label="Close roster"
             >
               <X className="w-4 h-4" />
@@ -740,15 +772,16 @@ export default function App() {
           </div>
 
           {/* Member Groups Scroll */}
-          <div className="flex-1 overflow-y-auto px-2.5 py-3 space-y-4">
+          <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5 scrollbar-thin">
             
-            {/* Group 1: The Board */}
-            <div className="space-y-0.5">
-              <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-cyan-400">
-                The Board — {boardMembers.length}
+            {/* The Board */}
+            <div className="space-y-1">
+              <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-cyan-400 flex items-center justify-between">
+                <span>The Board — {boardMembers.length}</span>
+                <span className="text-[9px] font-mono text-cyan-400/70">VIP</span>
               </div>
 
-              <div className="space-y-0.5 pt-1">
+              <div className="space-y-1 pt-1">
                 {boardMembers.map((member) => (
                   <div
                     key={member.id}
@@ -756,25 +789,25 @@ export default function App() {
                       sounds.playClick();
                       setSelectedProfileUser(member);
                     }}
-                    className="flex items-center gap-2.5 px-2 py-1.5 rounded-md hover:bg-white/[0.04] transition cursor-pointer group"
+                    className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl bg-slate-900/40 hover:bg-cyan-500/10 border border-transparent hover:border-cyan-500/30 transition cursor-pointer group"
                   >
                     <div className="relative shrink-0">
-                      <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${member.avatarBg} border border-cyan-400/50 flex items-center justify-center text-[10px] font-bold text-white`}>
+                      <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${member.avatarBg} border border-cyan-400/60 flex items-center justify-center text-[10px] font-bold text-white shadow-sm`}>
                         {member.initials}
                       </div>
                       {member.status === 'online' && (
-                        <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 ring-1 ring-[#0b0e14]" />
+                        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-[#090d16]" />
                       )}
                       {member.status === 'in-deal-room' && (
-                        <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-cyan-400 ring-1 ring-[#0b0e14]" />
+                        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-cyan-400 ring-2 ring-[#090d16]" />
                       )}
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      <div className="text-xs font-semibold text-zinc-200 group-hover:text-cyan-300 truncate">
+                      <div className="text-xs font-semibold text-slate-100 group-hover:text-cyan-300 truncate">
                         {member.name}
                       </div>
-                      <div className="text-[10px] text-zinc-400 truncate">
+                      <div className="text-[10px] text-slate-400 truncate">
                         {member.roleTitle}
                       </div>
                     </div>
@@ -783,13 +816,13 @@ export default function App() {
               </div>
             </div>
 
-            {/* Group 2: Architects */}
-            <div className="space-y-0.5">
-              <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+            {/* Architects */}
+            <div className="space-y-1">
+              <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
                 Architects — {architectMembers.length}
               </div>
 
-              <div className="space-y-0.5 pt-1">
+              <div className="space-y-1 pt-1">
                 {architectMembers.map((member) => (
                   <div
                     key={member.id}
@@ -797,22 +830,22 @@ export default function App() {
                       sounds.playClick();
                       setSelectedProfileUser(member);
                     }}
-                    className="flex items-center gap-2.5 px-2 py-1.5 rounded-md hover:bg-white/[0.04] transition cursor-pointer group"
+                    className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-slate-900/50 transition cursor-pointer group"
                   >
                     <div className="relative shrink-0">
-                      <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${member.avatarBg} border border-zinc-700 flex items-center justify-center text-[10px] font-bold text-zinc-300`}>
+                      <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${member.avatarBg} border border-slate-700 flex items-center justify-center text-[10px] font-bold text-slate-200`}>
                         {member.initials}
                       </div>
                       {member.status === 'online' && (
-                        <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 ring-1 ring-[#0b0e14]" />
+                        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-[#090d16]" />
                       )}
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      <div className="text-xs font-medium text-zinc-300 group-hover:text-white truncate">
+                      <div className="text-xs font-medium text-slate-200 group-hover:text-white truncate">
                         {member.name}
                       </div>
-                      <div className="text-[10px] text-zinc-400 truncate">
+                      <div className="text-[10px] text-slate-400 truncate">
                         {member.roleTitle}
                       </div>
                     </div>
@@ -821,13 +854,13 @@ export default function App() {
               </div>
             </div>
 
-            {/* Group 3: Members */}
-            <div className="space-y-0.5">
-              <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+            {/* Regular Members */}
+            <div className="space-y-1">
+              <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
                 Members — {regularMembers.length}
               </div>
 
-              <div className="space-y-0.5 pt-1">
+              <div className="space-y-1 pt-1">
                 {regularMembers.slice(0, 15).map((member) => (
                   <div
                     key={member.id}
@@ -835,22 +868,22 @@ export default function App() {
                       sounds.playClick();
                       setSelectedProfileUser(member);
                     }}
-                    className="flex items-center gap-2.5 px-2 py-1.5 rounded-md hover:bg-white/[0.03] transition cursor-pointer group"
+                    className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-slate-900/40 transition cursor-pointer group"
                   >
                     <div className="relative shrink-0">
-                      <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${member.avatarBg} border border-zinc-800 flex items-center justify-center text-[10px] font-semibold text-zinc-400`}>
+                      <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${member.avatarBg} border border-slate-800 flex items-center justify-center text-[10px] font-semibold text-slate-400`}>
                         {member.initials}
                       </div>
                       {member.status === 'online' && (
-                        <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 ring-1 ring-[#0b0e14]" />
+                        <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-400 ring-2 ring-[#090d16]" />
                       )}
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      <div className="text-xs text-zinc-400 group-hover:text-zinc-200 truncate">
+                      <div className="text-xs text-slate-300 group-hover:text-slate-100 truncate">
                         {member.name}
                       </div>
-                      <div className="text-[10px] text-zinc-400 truncate">
+                      <div className="text-[10px] text-slate-400 truncate">
                         {member.roleTitle}
                       </div>
                     </div>
@@ -862,14 +895,13 @@ export default function App() {
           </div>
         </aside>
 
-        {/* Backdrop overlay for mobile members drawer */}
+        {/* Backdrop for mobile roster */}
         {isMobileMembersOpen && (
           <div
             onClick={() => setIsMobileMembersOpen(false)}
-            className="fixed inset-0 z-30 bg-black/75 backdrop-blur-sm xl:hidden animate-in fade-in duration-200"
+            className="fixed inset-0 z-30 bg-black/80 backdrop-blur-sm xl:hidden"
           />
         )}
-
 
       </div>
 
@@ -877,7 +909,7 @@ export default function App() {
       {/* MODALS & OVERLAYS                                                         */}
       {/* ========================================================================= */}
       
-      {/* VIP Access Modal (Web3 / Supabase Verification) */}
+      {/* VIP Access Modal */}
       <VIPAccessModal
         isOpen={isVIPModalOpen}
         onClose={() => setIsVIPModalOpen(false)}
@@ -885,7 +917,7 @@ export default function App() {
         currentUser={currentUser}
       />
 
-      {/* Token-Gate Modal (Requirement 3: Locked Channels) */}
+      {/* Token-Gate Modal */}
       <TokenGateModal
         isOpen={isTokenGateOpen}
         channel={tokenGatedChannel}
@@ -903,7 +935,7 @@ export default function App() {
         }}
       />
 
-      {/* Create New Post Dispatch Modal (Requirement 2) */}
+      {/* Create New Post Dispatch Modal */}
       <CreatePostModal
         isOpen={isCreatePostOpen}
         onClose={() => setIsCreatePostOpen(false)}

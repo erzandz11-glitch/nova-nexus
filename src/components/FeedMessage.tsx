@@ -7,7 +7,11 @@ import {
   Check, 
   TrendingUp, 
   ShieldCheck, 
-  Send 
+  Send,
+  Zap,
+  ExternalLink,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { Message, User } from '../types';
 import { sounds } from '../services/soundEffects';
@@ -75,240 +79,237 @@ export const FeedMessage = memo<FeedMessageProps>(({
 
   return (
     <article 
-      className={`group relative rounded-xl px-4 py-3.5 sm:px-5 sm:py-4 transition-all duration-150 ${
+      className={`group relative rounded-2xl p-5 sm:p-6 transition-all duration-200 ${
         message.isPinned
-          ? 'bg-[#111622]/90 border border-cyan-500/20 shadow-sm'
-          : 'bg-[#0d111a]/80 hover:bg-[#111622] border border-white/[0.04] hover:border-white/[0.08]'
+          ? 'bg-gradient-to-b from-[#0f172a]/95 to-[#0b0f19]/95 border border-cyan-500/35 shadow-[0_0_25px_rgba(6,182,212,0.15)]'
+          : 'bg-gradient-to-b from-[#0d121c]/90 to-[#090d16]/90 hover:from-[#111724]/90 hover:to-[#0c101a]/90 border border-slate-800/80 hover:border-cyan-500/30 shadow-[0_4px_20px_rgba(0,0,0,0.35)]'
       }`}
     >
       {/* Pinned Indicator Header */}
       {message.isPinned && (
-        <div className="flex items-center justify-between text-xs text-cyan-400/90 mb-2.5 pb-2 border-b border-cyan-500/10">
-          <div className="flex items-center gap-1.5 font-medium tracking-wide">
-            <Pin className="w-3.5 h-3.5 rotate-45 text-cyan-400 fill-cyan-400/20" />
-            <span>Pinned Announcement</span>
+        <div className="flex items-center justify-between text-xs text-cyan-400 font-semibold mb-3.5 pb-2.5 border-b border-cyan-500/20">
+          <div className="flex items-center gap-2 tracking-wide uppercase">
+            <Pin className="w-3.5 h-3.5 rotate-45 text-cyan-400 fill-cyan-400/30" />
+            <span>High-Priority Syndicate Directive</span>
           </div>
-          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-cyan-400/10 text-cyan-300">
-            Mandate
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-400/10 text-cyan-300 border border-cyan-500/30">
+            MANDATE
           </span>
         </div>
       )}
 
-      {/* Main Message Block: Avatar Left, Message Content Right (Discord Flow) */}
-      <div className="flex items-start gap-3.5">
-        {/* Avatar */}
-        <button
-          onClick={() => {
-            sounds.playClick();
-            onOpenProfile && onOpenProfile(message.author);
-          }}
-          className="relative shrink-0 text-left focus:outline-none rounded-full group/avatar mt-0.5"
-        >
-          <div
-            className={`w-10 h-10 rounded-full bg-gradient-to-br ${message.author.avatarBg} border ${
-              isAuthorBoard 
-                ? 'border-cyan-400/60 shadow-sm' 
-                : isArchitect 
-                ? 'border-zinc-500/60'
-                : 'border-zinc-700/50'
-            } flex items-center justify-center text-xs font-bold text-zinc-100 transition-transform group-hover/avatar:scale-105`}
+      {/* Header Row: Author Info & Badges */}
+      <div className="flex items-start justify-between gap-3 mb-3.5">
+        <div className="flex items-center gap-3 min-w-0">
+          <button
+            onClick={() => {
+              sounds.playClick();
+              onOpenProfile && onOpenProfile(message.author);
+            }}
+            className="relative shrink-0 text-left focus:outline-none rounded-full group/avatar cursor-pointer"
           >
-            {message.author.initials}
-          </div>
-          {message.author.status === 'online' && (
-            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-[#0d111a]" />
-          )}
-          {message.author.status === 'in-deal-room' && (
-            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-cyan-400 ring-2 ring-[#0d111a]" />
-          )}
-        </button>
+            <div
+              className={`w-11 h-11 rounded-full bg-gradient-to-br ${message.author.avatarBg} border ${
+                isAuthorBoard 
+                  ? 'border-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.4)]' 
+                  : isArchitect 
+                  ? 'border-sky-500/60'
+                  : 'border-slate-700'
+              } flex items-center justify-center text-xs font-bold text-white transition-transform group-hover/avatar:scale-105`}
+            >
+              {message.author.initials}
+            </div>
+            {message.author.status === 'online' && (
+              <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-400 ring-2 ring-[#090d16]" />
+            )}
+            {message.author.status === 'in-deal-room' && (
+              <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-cyan-400 ring-2 ring-[#090d16]" />
+            )}
+          </button>
 
-        {/* Message Body */}
-        <div className="flex-1 min-w-0">
-          {/* Header Row */}
-          <div className="flex items-center justify-between gap-2">
+          <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={() => {
                   sounds.playClick();
                   onOpenProfile && onOpenProfile(message.author);
                 }}
-                className="text-sm font-semibold text-zinc-100 hover:text-cyan-300 transition-colors cursor-pointer"
+                className="text-sm font-bold text-white hover:text-cyan-300 transition-colors cursor-pointer"
               >
                 {message.author.name}
               </button>
 
-              {/* Badges */}
+              {/* Ranks & Verifications */}
               {isAuthorBoard ? (
-                <span className="text-[10px] font-semibold text-cyan-300 bg-cyan-500/10 border border-cyan-500/20 px-1.5 py-0.5 rounded">
+                <span className="text-[10px] font-bold text-cyan-300 bg-cyan-500/15 border border-cyan-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <ShieldCheck className="w-3 h-3 text-cyan-400" />
                   The Board
                 </span>
               ) : isArchitect ? (
-                <span className="text-[10px] font-medium text-zinc-300 bg-zinc-800/80 border border-zinc-700/50 px-1.5 py-0.5 rounded">
+                <span className="text-[10px] font-semibold text-sky-300 bg-sky-500/10 border border-sky-500/20 px-2 py-0.5 rounded-full">
                   Architect
                 </span>
               ) : null}
 
-              <span className="text-zinc-500 text-xs">·</span>
-              <span className="text-xs text-zinc-500 font-normal">
-                {message.timestamp}
-              </span>
-            </div>
-
-            {/* Pass ID Tag */}
-            <div className="hidden sm:inline-flex items-center gap-1 text-[11px] text-zinc-400 bg-zinc-900/60 border border-zinc-800/80 px-2 py-0.5 rounded-md shrink-0">
-              <ShieldCheck className="w-3 h-3 text-cyan-400/80" />
-              <span>{message.author.passId}</span>
-            </div>
-          </div>
-
-          {/* Title if any */}
-          {message.title && (
-            <h4 className="mt-1 text-sm font-semibold text-cyan-300/90 tracking-tight">
-              {message.title}
-            </h4>
-          )}
-
-          {/* Text Content */}
-          <p className="mt-1 text-sm text-zinc-300 leading-relaxed font-normal whitespace-pre-line">
-            {message.content}
-          </p>
-
-          {/* Attachment Preview (if any) */}
-          {message.attachment && (
-            <div className="mt-3 rounded-lg bg-[#080b12] border border-white/[0.06] p-3 transition-colors hover:border-cyan-500/30">
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs font-semibold text-zinc-200">
-                  {message.attachment.title}
+              {message.author.verifiedAudit && (
+                <span className="text-[10px] font-mono text-slate-400 bg-slate-800/80 px-1.5 py-0.5 rounded border border-slate-700">
+                  {message.author.passId}
                 </span>
-                {message.attachment.tag && (
-                  <span className="text-[10px] text-cyan-300 font-medium px-1.5 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20">
-                    {message.attachment.tag}
-                  </span>
-                )}
-              </div>
-
-              {message.attachment.subtitle && (
-                <p className="text-xs text-zinc-400 mb-2">
-                  {message.attachment.subtitle}
-                </p>
               )}
+            </div>
 
-              {message.attachment.metricValue && (
-                <div className="flex items-baseline gap-2 pt-2 border-t border-zinc-800/60">
-                  <span className="text-xl font-mono font-bold text-cyan-400 tabular-nums">
-                    {message.attachment.metricValue}
-                  </span>
-                  {message.attachment.metricLabel && (
-                    <span className="text-xs text-zinc-400">
-                      {message.attachment.metricLabel}
-                    </span>
-                  )}
-                  {message.attachment.metricChange && (
-                    <span className="text-xs font-medium text-emerald-400 flex items-center gap-1 ml-auto">
-                      <TrendingUp className="w-3 h-3" />
-                      {message.attachment.metricChange}
-                    </span>
-                  )}
-                </div>
-              )}
+            <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
+              <span>{message.author.roleTitle}</span>
+              <span>•</span>
+              <span className="font-mono text-[11px] text-slate-400">{message.timestamp}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Share Button */}
+        <button
+          onClick={handleCopyLink}
+          className="p-2 text-slate-400 hover:text-cyan-300 rounded-xl hover:bg-slate-800/60 transition cursor-pointer shrink-0"
+          title="Share Transmission"
+        >
+          {copiedLink ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
+        </button>
+      </div>
+
+      {/* Message Title (if present) */}
+      {message.title && (
+        <h3 className="text-base font-bold text-slate-100 mb-2 tracking-tight group-hover:text-cyan-200 transition-colors">
+          {message.title}
+        </h3>
+      )}
+
+      {/* Message Content Body */}
+      <div className="text-xs sm:text-sm text-slate-300 leading-relaxed space-y-2 whitespace-pre-line mb-4 font-normal">
+        {message.content}
+      </div>
+
+      {/* Attachment Card (if present) */}
+      {message.attachment && (
+        <div className="mb-4 rounded-xl overflow-hidden border border-cyan-500/20 bg-[#070b14]/90 p-3.5 space-y-2.5">
+          <div className="flex items-center justify-between text-xs text-slate-400 pb-2 border-b border-white/[0.06]">
+            <span className="font-semibold text-cyan-300 flex items-center gap-1.5">
+              <TrendingUp className="w-3.5 h-3.5 text-cyan-400" />
+              Verified Telemetry Payload
+            </span>
+            <span className="font-mono text-[10px] text-slate-400">SHA-256 VERIFIED</span>
+          </div>
+
+          {message.attachment.type === 'image' && message.attachment.url && (
+            <div className="rounded-lg overflow-hidden border border-slate-800">
+              <img
+                src={message.attachment.url}
+                alt={message.attachment.title || 'Attached Intel'}
+                className="w-full max-h-80 object-cover"
+              />
             </div>
           )}
 
-          {/* Action Row */}
-          <div className="mt-3 flex items-center gap-2">
-            {/* Boost button */}
-            <button
-              onClick={handleBoostToggle}
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
-                boosted
-                  ? 'bg-cyan-400/15 text-cyan-300 border border-cyan-500/40'
-                  : 'bg-zinc-800/40 text-zinc-400 border border-zinc-700/30 hover:border-zinc-600 hover:text-zinc-200 hover:bg-zinc-800/80'
-              }`}
-              title="Boost"
-            >
-              <Sparkles
-                className={`w-3 h-3 ${
-                  boosted ? 'text-cyan-400 fill-cyan-400' : 'text-zinc-400'
-                }`}
-              />
-              <span>{boosted ? 'Boosted' : 'Boost'}</span>
-              <span className="tabular-nums font-semibold text-zinc-300">
-                {boostCount}
-              </span>
-            </button>
+          {message.attachment.title && (
+            <div className="text-xs font-semibold text-slate-200">{message.attachment.title}</div>
+          )}
 
-            {/* Replies button */}
-            <button
-              onClick={() => {
-                sounds.playClick();
-                setRepliesExpanded(!repliesExpanded);
-              }}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-zinc-400 hover:text-zinc-200 bg-zinc-800/40 hover:bg-zinc-800/80 border border-zinc-700/30 hover:border-zinc-600 transition-colors cursor-pointer"
-            >
-              <MessageSquare className="w-3 h-3 text-zinc-400" />
-              <span>
-                {repliesExpanded ? 'Hide' : 'Replies'} ({(message.repliesCount || 0) + localReplies.length})
-              </span>
-            </button>
-
-            {/* Share button */}
-            <button
-              onClick={handleCopyLink}
-              className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50 transition-colors cursor-pointer ml-auto"
-              title="Share"
-            >
-              {copiedLink ? (
-                <>
-                  <Check className="w-3 h-3 text-emerald-400" />
-                  <span className="text-emerald-400">Copied</span>
-                </>
-              ) : (
-                <>
-                  <Share2 className="w-3 h-3" />
-                  <span>Share</span>
-                </>
-              )}
-            </button>
-          </div>
-
-          {/* Reply Section */}
-          {repliesExpanded && (
-            <div className="mt-3 pt-2.5 space-y-2.5 border-t border-zinc-800/60 animate-in fade-in duration-150">
-              {localReplies.map((reply) => (
-                <div key={reply.id} className="pl-3 border-l-2 border-cyan-500/40 py-0.5 space-y-0.5">
-                  <div className="flex items-center gap-1.5 text-xs">
-                    <span className="font-semibold text-zinc-200">{reply.author.name}</span>
-                    <span className="text-zinc-600">·</span>
-                    <span className="text-zinc-500 text-[11px]">{reply.time}</span>
-                  </div>
-                  <p className="text-xs text-zinc-300 leading-relaxed">{reply.text}</p>
+          {message.attachment.metrics && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1">
+              {Object.entries(message.attachment.metrics).map(([key, val]) => (
+                <div key={key} className="p-2 rounded-lg bg-slate-900/80 border border-slate-800">
+                  <div className="text-[10px] uppercase font-bold text-slate-400">{key}</div>
+                  <div className="text-xs font-mono font-bold text-cyan-300">{val}</div>
                 </div>
               ))}
-
-              {/* Quick Reply Form */}
-              <form onSubmit={handleAddReply} className="flex items-center gap-2 pt-1">
-                <input
-                  type="text"
-                  value={newReplyText}
-                  onChange={(e) => setNewReplyText(e.target.value)}
-                  placeholder="Send a quick reply..."
-                  className="flex-1 bg-zinc-900/90 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs text-zinc-200 placeholder:text-zinc-500 focus:outline-none focus:border-cyan-500/40"
-                />
-                <button
-                  type="submit"
-                  disabled={!newReplyText.trim()}
-                  className="px-3 py-1.5 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold rounded-lg text-xs transition-all disabled:opacity-30 cursor-pointer flex items-center gap-1"
-                >
-                  <Send className="w-3 h-3" />
-                  <span>Reply</span>
-                </button>
-              </form>
             </div>
           )}
         </div>
+      )}
+
+      {/* Action Bar: Boost, Reply, Stats */}
+      <div className="flex items-center justify-between pt-3 border-t border-white/[0.06] text-xs">
+        <div className="flex items-center gap-2">
+          {/* Boost Button */}
+          <button
+            onClick={handleBoostToggle}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer ${
+              boosted
+                ? 'bg-gradient-to-r from-cyan-500/25 to-blue-500/25 text-cyan-300 border border-cyan-400/50 shadow-[0_0_15px_rgba(6,182,212,0.3)]'
+                : 'bg-slate-900/70 hover:bg-slate-850 text-slate-300 hover:text-cyan-300 border border-slate-800 hover:border-cyan-500/30'
+            }`}
+          >
+            <Sparkles className={`w-3.5 h-3.5 ${boosted ? 'text-cyan-400 animate-pulse' : 'text-slate-400'}`} />
+            <span>Boost</span>
+            <span className="font-mono text-xs ml-0.5">{boostCount}</span>
+          </button>
+
+          {/* Replies Expander */}
+          <button
+            onClick={() => {
+              sounds.playClick();
+              setRepliesExpanded(!repliesExpanded);
+            }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/70 hover:bg-slate-850 text-slate-300 hover:text-slate-100 border border-slate-800 transition cursor-pointer"
+          >
+            <MessageSquare className="w-3.5 h-3.5 text-slate-400" />
+            <span>Debriefs</span>
+            <span className="font-mono text-xs ml-0.5">
+              {(message.repliesCount || 0) + localReplies.length}
+            </span>
+            {repliesExpanded ? <ChevronUp className="w-3 h-3 ml-1" /> : <ChevronDown className="w-3 h-3 ml-1" />}
+          </button>
+        </div>
+
+        {/* Guild Seal Tag */}
+        <div className="text-[10px] font-mono text-slate-400 flex items-center gap-1">
+          <Zap className="w-3 h-3 text-cyan-400" />
+          <span>ESCROW SYNCED</span>
+        </div>
       </div>
+
+      {/* Expandable Replies Section */}
+      {repliesExpanded && (
+        <div className="mt-4 pt-4 border-t border-white/[0.06] space-y-3 animate-in fade-in duration-200">
+          {/* Existing / Local Replies list */}
+          {localReplies.map((reply) => (
+            <div key={reply.id} className="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-900/50 border border-slate-800/80">
+              <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${reply.author.avatarBg} border border-cyan-400/40 flex items-center justify-center text-[10px] font-bold text-white shrink-0`}>
+                {reply.author.initials}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between text-xs mb-0.5">
+                  <span className="font-semibold text-slate-200">{reply.author.name}</span>
+                  <span className="font-mono text-[10px] text-slate-400">{reply.time}</span>
+                </div>
+                <div className="text-xs text-slate-300">{reply.text}</div>
+              </div>
+            </div>
+          ))}
+
+          {/* Quick Reply Form */}
+          <form onSubmit={handleAddReply} className="flex items-center gap-2 pt-1">
+            <input
+              type="text"
+              value={newReplyText}
+              onChange={(e) => setNewReplyText(e.target.value)}
+              placeholder="Contribute perspective or rebuttal..."
+              className="flex-1 bg-slate-900/90 border border-slate-800 hover:border-slate-700 focus:border-cyan-400 rounded-xl px-3.5 py-2 text-xs text-white placeholder:text-slate-400 focus:outline-none transition"
+            />
+            <button
+              type="submit"
+              disabled={!newReplyText.trim()}
+              className={`px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1 cursor-pointer shrink-0 ${
+                newReplyText.trim()
+                  ? 'bg-cyan-500 hover:bg-cyan-400 text-black shadow-sm'
+                  : 'bg-slate-850 text-slate-600 cursor-not-allowed opacity-50'
+              }`}
+            >
+              <Send className="w-3.5 h-3.5" />
+            </button>
+          </form>
+        </div>
+      )}
     </article>
   );
 });
-
+FeedMessage.displayName = 'FeedMessage';
