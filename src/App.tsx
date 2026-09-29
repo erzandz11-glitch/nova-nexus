@@ -41,6 +41,7 @@ import { NovaCommandSurface } from './nova-os/NovaCommandSurface';
 import { NovaKeyboardRouter } from './nova-os/novaKeyboard';
 import { NovaStateManager } from './nova-os/novaState';
 import { NovaIdentityControl } from './nova-os/NovaIdentityControl';
+import { novaDataStore } from './services/novaDataStore';
 
 import { 
   User, 
@@ -56,13 +57,7 @@ import {
 
 import { 
   CURRENT_USER, 
-  MOCK_USERS, 
-  MOCK_CHANNELS, 
-  MOCK_MESSAGES, 
-  MOCK_LEADERBOARD,
-  INITIAL_ESCROW_TRANSACTIONS,
-  MOCK_NOTIFICATIONS,
-  MOCK_OTC_DEALS
+  MOCK_CHANNELS 
 } from './data/mockData';
 
 import { TheArena } from './pages/TheArena';
@@ -82,13 +77,15 @@ export default function App() {
   // Navigation & View States
   const [activeView, setActiveView] = useState<'feed' | 'arena'>('feed');
   const [activeChannelId, setActiveChannelId] = useState<string>('inner-circle');
-  const [messages, setMessages] = useState<Record<string, Message[]>>(MOCK_MESSAGES);
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>(MOCK_LEADERBOARD);
-  const [members, setMembers] = useState<User[]>(MOCK_USERS);
+
+  // Dynamic Store States
   const [currentUser, setCurrentUser] = useState<User>(CURRENT_USER);
-  const [transactions, setTransactions] = useState<EscrowTransaction[]>(INITIAL_ESCROW_TRANSACTIONS);
-  const [notifications, setNotifications] = useState<SyndicateNotification[]>(MOCK_NOTIFICATIONS);
-  const [deals, setDeals] = useState<OTCDeal[]>(MOCK_OTC_DEALS);
+  const [messages, setMessages] = useState<Record<string, Message[]>>(() => novaDataStore.getAllMessages());
+  const [transactions, setTransactions] = useState<EscrowTransaction[]>(() => novaDataStore.getEscrowTransactions());
+  const [deals, setDeals] = useState<OTCDeal[]>(() => novaDataStore.getDeals());
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>(() => novaDataStore.getLeaderboard());
+  const [notifications, setNotifications] = useState<SyndicateNotification[]>(() => novaDataStore.getNotifications());
+  const [members, setMembers] = useState<User[]>(() => novaDataStore.getMembers());
 
   // Unlocked restricted channels tracker
   const [unlockedChannels, setUnlockedChannels] = useState<string[]>([]);
@@ -106,6 +103,34 @@ export default function App() {
   const [isCommandOpen, setIsCommandOpen] = useState<boolean>(false);
   const [selectedProfileUser, setSelectedProfileUser] = useState<User | null>(null);
 
+  // Search in chat
+  const [chatSearch, setChatSearch] = useState<string>('');
+
+  // Interactive Quick Dispatch input state
+  const [quickDispatchText, setQuickDispatchText] = useState<string>('');
+
+  // Mobile Drawer Toggles
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState<boolean>(false);
+  const [isMobileMembersOpen, setIsMobileMembersOpen] = useState<boolean>(false);
+
+  // Register current user into the dynamic member pool on startup
+  useEffect(() => {
+    novaDataStore.registerMember(CURRENT_USER);
+  }, []);
+
+  // Subscribe to NovaDataStore changes
+  useEffect(() => {
+    const unsubscribe = novaDataStore.subscribe(() => {
+      setMessages(novaDataStore.getAllMessages());
+      setTransactions(novaDataStore.getEscrowTransactions());
+      setDeals(novaDataStore.getDeals());
+      setLeaderboard(novaDataStore.getLeaderboard());
+      setNotifications(novaDataStore.getNotifications());
+      setMembers(novaDataStore.getMembers());
+    });
+    return unsubscribe;
+  }, []);
+
   // Record session & attach global keyboard router (⌘K + G sequences)
   useEffect(() => {
     NovaStateManager.recordActivity('community', window.location.href, 'NOVA Community Syndicate');
@@ -115,16 +140,6 @@ export default function App() {
     return cleanup;
   }, []);
 
-  // Mobile & Tablet Drawer Toggles (<1024px and <1280px)
-  const [isMobileNavOpen, setIsMobileNavOpen] = useState<boolean>(false);
-  const [isMobileMembersOpen, setIsMobileMembersOpen] = useState<boolean>(false);
-
-  // Search & Filter in chat
-  const [chatSearch, setChatSearch] = useState<string>('');
-
-  // Interactive Quick Dispatch input state
-  const [quickDispatchText, setQuickDispatchText] = useState<string>('');
-
   // Unread notifications count
   const unreadNotifCount = useMemo(() => {
     return notifications.filter((n) => !n.read).length;
@@ -132,41 +147,8 @@ export default function App() {
 
   // Active Channel lookup
   const activeChannel = useMemo(() => {
-    return MOCK_CHANNELS.find((c) => c.id === activeChannelId) || MOCK_CHANNELS[1];
+    return MOCK_CHANNELS.find((c) => c.id === activeChannelId) || MOCK_CHANNELS[0];
   }, [activeChannelId]);
-
-  // High-throughput simulation engine for scalable global active user experience
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const randomAmount = Math.floor(Math.random() * 850000) + 75000;
-      const nodes = ['Zurich-01', 'Singapore-04', 'London-02', 'Dubai-01', 'Tokyo-02', 'Frankfurt-03'];
-      const types: ('Secondary Tranche' | 'OTC Buyout' | 'Cohort Retainer' | 'AI Cluster Allocation')[] = [
-        'Secondary Tranche',
-        'OTC Buyout',
-        'Cohort Retainer',
-        'AI Cluster Allocation',
-      ];
-      const randomType = types[Math.floor(Math.random() * types.length)];
-      const randomNode = nodes[Math.floor(Math.random() * nodes.length)];
-      const randomHash = `0x${Math.random().toString(16).substring(2, 6)}...${Math.random().toString(16).substring(2, 6)}`;
-
-      const newTx: EscrowTransaction = {
-        id: `tx-${Date.now()}`,
-        timestamp: 'Just now',
-        amount: randomAmount,
-        sender: '0x' + Math.random().toString(16).substring(2, 6).toUpperCase() + '...Nova',
-        recipient: 'OTC Escrow Pool',
-        dealType: randomType,
-        txHash: randomHash,
-        nodeLocation: randomNode,
-        status: 'Settled',
-      };
-
-      setTransactions((prev) => [newTx, ...prev.slice(0, 19)]);
-    }, 12000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   // Filter messages by channel & search
   const currentMessages = useMemo(() => {
@@ -181,9 +163,10 @@ export default function App() {
   }, [messages, activeChannelId, chatSearch]);
 
   // Roster groupings for the Right Sidebar
-  const boardMembers = useMemo(() => members.filter((m) => m.rank === 'The Board'), [members]);
-  const architectMembers = useMemo(() => members.filter((m) => m.rank === 'Architects'), [members]);
-  const regularMembers = useMemo(() => members.filter((m) => m.rank === 'Members'), [members]);
+  const allDisplayMembers = members.length > 0 ? members : [currentUser];
+  const boardMembers = useMemo(() => allDisplayMembers.filter((m) => m.rank === 'The Board'), [allDisplayMembers]);
+  const architectMembers = useMemo(() => allDisplayMembers.filter((m) => m.rank === 'Architects'), [allDisplayMembers]);
+  const regularMembers = useMemo(() => allDisplayMembers.filter((m) => m.rank === 'Members' || !m.rank), [allDisplayMembers]);
 
   // Switch channel handler
   const handleSelectChannel = (channel: Channel) => {
@@ -217,7 +200,7 @@ export default function App() {
     setAudioEnabled(state);
   };
 
-  // Add new dispatch post
+  // Add new dispatch post into dynamic store
   const handleCreatePost = (
     title: string,
     channelId: string,
@@ -240,31 +223,21 @@ export default function App() {
       repliesCount: 0,
     };
 
-    setMessages((prev) => ({
-      ...prev,
-      [targetChannelId]: [newMsg, ...(prev[targetChannelId] || [])],
-    }));
+    novaDataStore.addMessage(targetChannelId, newMsg);
 
     if (targetChannelId !== activeChannelId) {
       setActiveChannelId(targetChannelId);
     }
     setActiveView('feed');
 
-    setNotifications((prev) => [
-      {
-        id: `notif-${Date.now()}`,
-        title: 'New Dispatch Broadcasted',
-        description: `"${title || 'Confidential Transmission'}" broadcasted to ${activeChannel.name}.`,
-        timestamp: 'Just now',
-        read: false,
-        type: 'boost',
-      },
-      ...prev,
-    ]);
-
-    if (isSupabaseConfigured) {
-      supabaseService.sendDispatch(newMsg);
-    }
+    novaDataStore.addNotification({
+      id: `notif-${Date.now()}`,
+      title: 'New Dispatch Broadcasted',
+      description: `"${title || 'Confidential Transmission'}" broadcasted to ${activeChannel.name}.`,
+      timestamp: 'Just now',
+      read: false,
+      type: 'boost',
+    });
   };
 
   // Quick Dispatch Form Submission
@@ -281,21 +254,21 @@ export default function App() {
     setQuickDispatchText('');
   };
 
-  // Boost handler with Supabase sync
+  // Boost handler
   const handleBoostMessage = useCallback((msgId: string) => {
     sounds.playChime();
-    if (isSupabaseConfigured) {
-      supabaseService.boostMessage(msgId);
-    }
+    novaDataStore.boostMessage(msgId);
   }, []);
 
   // Verify Pass callback
   const handleVerifySuccess = (passId: string) => {
-    setCurrentUser((prev) => ({
-      ...prev,
+    const updated = {
+      ...currentUser,
       passId,
       verifiedAudit: true,
-    }));
+    };
+    setCurrentUser(updated);
+    novaDataStore.registerMember(updated);
     setIsVIPModalOpen(false);
   };
 
@@ -307,29 +280,20 @@ export default function App() {
     setIsMobileNavOpen(false);
   };
 
-  // Commit allocation
+  // Commit allocation into dynamic store
   const handleCommitAllocation = (dealId: string, amount: number) => {
-    setDeals((prev) =>
-      prev.map((d) => (d.id === dealId ? { ...d, filledAmount: d.filledAmount + amount } : d))
-    );
-    const newTx: EscrowTransaction = {
-      id: `tx-${Date.now()}`,
-      timestamp: 'Just now',
-      amount,
-      sender: currentUser.walletAddress || '0x843C...E98D',
-      recipient: 'OTC Escrow Pool',
-      dealType: 'Secondary Tranche',
-      txHash: '0x' + Math.random().toString(16).substring(2, 6) + '...' + Math.random().toString(16).substring(2, 6),
-      nodeLocation: 'Zurich-01',
-      status: 'Settled',
-    };
-    setTransactions((prev) => [newTx, ...prev]);
+    novaDataStore.commitDeal(dealId, amount, currentUser);
+  };
+
+  // Propose new deal into dynamic store
+  const handleCreateDeal = (newDeal: OTCDeal) => {
+    novaDataStore.addDeal(newDeal);
   };
 
   return (
     <div className="flex flex-col h-screen w-full bg-[#06080e] text-slate-100 overflow-hidden font-sans select-none antialiased">
       
-      {/* Live Cyber Syndicate Escrow Ticker */}
+      {/* Live Escrow Ticker */}
       <EscrowTicker 
         transactions={transactions} 
         onOpenDealRoom={() => setIsDealRoomOpen(true)} 
@@ -359,7 +323,7 @@ export default function App() {
                     SYNDICATE
                   </span>
                 </div>
-                <div className="text-[11px] text-slate-400 font-medium">Private Creator Guild</div>
+                <div className="text-[11px] text-slate-400 font-medium">Dynamic Live Container</div>
               </div>
             </div>
 
@@ -412,6 +376,7 @@ export default function App() {
                     {channelGroup.map((channel) => {
                       const isActive = activeView === 'feed' && activeChannelId === channel.id;
                       const isLocked = channel.isRestricted && !unlockedChannels.includes(channel.id);
+                      const channelMsgCount = (messages[channel.id] || []).length;
 
                       return (
                         <button
@@ -428,9 +393,9 @@ export default function App() {
                             <span className="truncate">{channel.name}</span>
                           </div>
 
-                          {channel.unreadCount ? (
+                          {channelMsgCount > 0 ? (
                             <span className="shrink-0 text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-semibold">
-                              {channel.unreadCount}
+                              {channelMsgCount}
                             </span>
                           ) : isLocked ? (
                             <div className="flex items-center gap-1 text-[10px] text-cyan-400 font-semibold px-1.5 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20">
@@ -443,7 +408,7 @@ export default function App() {
                     })}
                   </div>
 
-                  {/* Direct Transmissions bridge inside sidebar */}
+                  {/* Direct Transmissions bridges */}
                   {category === 'Alpha & Intelligence' && (
                     <div className="pt-2 px-1 space-y-2">
                       <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
@@ -531,7 +496,7 @@ export default function App() {
           </div>
         </aside>
 
-        {/* Backdrop overlay for mobile */}
+        {/* Backdrop for mobile */}
         {isMobileNavOpen && (
           <div
             onClick={() => setIsMobileNavOpen(false)}
@@ -638,7 +603,7 @@ export default function App() {
                   isOpen={isNotifOpen}
                   onClose={() => setIsNotifOpen(false)}
                   onMarkAllAsRead={() => {
-                    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+                    novaDataStore.markNotificationsAsRead();
                   }}
                 />
               </div>
@@ -702,7 +667,7 @@ export default function App() {
                         type="text"
                         value={quickDispatchText}
                         onChange={(e) => setQuickDispatchText(e.target.value)}
-                        placeholder={`Share confidential alpha, metrics, or insights with #${activeChannel.name}...`}
+                        placeholder={`Siarkan alpha, metrik, atau pembaruan baru ke #${activeChannel.name}...`}
                         className="flex-1 bg-slate-900/80 border border-slate-800 hover:border-slate-700 focus:border-cyan-400 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none transition shadow-inner"
                       />
                       <button
@@ -733,12 +698,29 @@ export default function App() {
                     />
                   ))
                 ) : (
-                  <div className="py-20 text-center space-y-3 rounded-2xl bg-slate-900/30 border border-slate-800/80">
-                    <Sparkles className="w-8 h-8 mx-auto text-cyan-400/60" />
-                    <div className="text-sm font-bold text-white">No active transmissions in this channel</div>
-                    <p className="text-xs text-slate-400 max-w-sm mx-auto">
-                      Be the first to broadcast a high-signal dispatch or market intelligence.
-                    </p>
+                  /* Clean, Futuristic Empty State */
+                  <div className="py-16 px-6 text-center space-y-4 rounded-2xl bg-gradient-to-b from-[#0c101a]/80 to-[#070a12]/80 border border-cyan-500/20 shadow-xl max-w-lg mx-auto animate-in fade-in duration-300">
+                    <div className="w-14 h-14 mx-auto rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
+                      <Sparkles className="w-7 h-7" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <h3 className="text-base font-bold text-white tracking-tight">
+                        #{activeChannel.name} // Standby Transmisi
+                      </h3>
+                      <p className="text-xs text-slate-400 max-w-sm mx-auto leading-relaxed">
+                        Saluran ini bersih dan siap menerima data intelijen, transaksi, atau sinyal pertama dari Anda.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        sounds.playClick();
+                        setIsCreatePostOpen(true);
+                      }}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-bold text-xs shadow-[0_0_20px_rgba(6,182,212,0.3)] transition cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Siarkan Alpha Pertama</span>
+                    </button>
                   </div>
                 )}
               </div>
@@ -759,7 +741,7 @@ export default function App() {
             <div className="flex items-center gap-2">
               <Users className="w-4 h-4 text-cyan-400" />
               <span className="text-xs font-bold uppercase tracking-wider text-slate-200">
-                Syndicate Roster ({members.length})
+                Syndicate Roster ({allDisplayMembers.length})
               </span>
             </div>
             <button
@@ -775,122 +757,128 @@ export default function App() {
           <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5 scrollbar-thin">
             
             {/* The Board */}
-            <div className="space-y-1">
-              <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-cyan-400 flex items-center justify-between">
-                <span>The Board — {boardMembers.length}</span>
-                <span className="text-[9px] font-mono text-cyan-400/70">VIP</span>
-              </div>
+            {boardMembers.length > 0 && (
+              <div className="space-y-1">
+                <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-cyan-400 flex items-center justify-between">
+                  <span>The Board — {boardMembers.length}</span>
+                  <span className="text-[9px] font-mono text-cyan-400/70">VIP</span>
+                </div>
 
-              <div className="space-y-1 pt-1">
-                {boardMembers.map((member) => (
-                  <div
-                    key={member.id}
-                    onClick={() => {
-                      sounds.playClick();
-                      setSelectedProfileUser(member);
-                    }}
-                    className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl bg-slate-900/40 hover:bg-cyan-500/10 border border-transparent hover:border-cyan-500/30 transition cursor-pointer group"
-                  >
-                    <div className="relative shrink-0">
-                      <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${member.avatarBg} border border-cyan-400/60 flex items-center justify-center text-[10px] font-bold text-white shadow-sm`}>
-                        {member.initials}
+                <div className="space-y-1 pt-1">
+                  {boardMembers.map((member) => (
+                    <div
+                      key={member.id}
+                      onClick={() => {
+                        sounds.playClick();
+                        setSelectedProfileUser(member);
+                      }}
+                      className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl bg-slate-900/40 hover:bg-cyan-500/10 border border-transparent hover:border-cyan-500/30 transition cursor-pointer group"
+                    >
+                      <div className="relative shrink-0">
+                        <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${member.avatarBg} border border-cyan-400/60 flex items-center justify-center text-[10px] font-bold text-white shadow-sm`}>
+                          {member.initials}
+                        </div>
+                        {member.status === 'online' && (
+                          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-[#090d16]" />
+                        )}
+                        {member.status === 'in-deal-room' && (
+                          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-cyan-400 ring-2 ring-[#090d16]" />
+                        )}
                       </div>
-                      {member.status === 'online' && (
-                        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-[#090d16]" />
-                      )}
-                      {member.status === 'in-deal-room' && (
-                        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-cyan-400 ring-2 ring-[#090d16]" />
-                      )}
-                    </div>
 
-                    <div className="min-w-0 flex-1">
-                      <div className="text-xs font-semibold text-slate-100 group-hover:text-cyan-300 truncate">
-                        {member.name}
-                      </div>
-                      <div className="text-[10px] text-slate-400 truncate">
-                        {member.roleTitle}
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs font-semibold text-slate-100 group-hover:text-cyan-300 truncate">
+                          {member.name}
+                        </div>
+                        <div className="text-[10px] text-slate-400 truncate">
+                          {member.roleTitle}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Architects */}
-            <div className="space-y-1">
-              <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                Architects — {architectMembers.length}
-              </div>
+            {architectMembers.length > 0 && (
+              <div className="space-y-1">
+                <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  Architects — {architectMembers.length}
+                </div>
 
-              <div className="space-y-1 pt-1">
-                {architectMembers.map((member) => (
-                  <div
-                    key={member.id}
-                    onClick={() => {
-                      sounds.playClick();
-                      setSelectedProfileUser(member);
-                    }}
-                    className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-slate-900/50 transition cursor-pointer group"
-                  >
-                    <div className="relative shrink-0">
-                      <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${member.avatarBg} border border-slate-700 flex items-center justify-center text-[10px] font-bold text-slate-200`}>
-                        {member.initials}
+                <div className="space-y-1 pt-1">
+                  {architectMembers.map((member) => (
+                    <div
+                      key={member.id}
+                      onClick={() => {
+                        sounds.playClick();
+                        setSelectedProfileUser(member);
+                      }}
+                      className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl hover:bg-slate-900/50 transition cursor-pointer group"
+                    >
+                      <div className="relative shrink-0">
+                        <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${member.avatarBg} border border-slate-700 flex items-center justify-center text-[10px] font-bold text-slate-200`}>
+                          {member.initials}
+                        </div>
+                        {member.status === 'online' && (
+                          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-[#090d16]" />
+                        )}
                       </div>
-                      {member.status === 'online' && (
-                        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-[#090d16]" />
-                      )}
-                    </div>
 
-                    <div className="min-w-0 flex-1">
-                      <div className="text-xs font-medium text-slate-200 group-hover:text-white truncate">
-                        {member.name}
-                      </div>
-                      <div className="text-[10px] text-slate-400 truncate">
-                        {member.roleTitle}
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs font-medium text-slate-200 group-hover:text-white truncate">
+                          {member.name}
+                        </div>
+                        <div className="text-[10px] text-slate-400 truncate">
+                          {member.roleTitle}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Regular Members */}
-            <div className="space-y-1">
-              <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                Members — {regularMembers.length}
-              </div>
+            {regularMembers.length > 0 && (
+              <div className="space-y-1">
+                <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  Members — {regularMembers.length}
+                </div>
 
-              <div className="space-y-1 pt-1">
-                {regularMembers.slice(0, 15).map((member) => (
-                  <div
-                    key={member.id}
-                    onClick={() => {
-                      sounds.playClick();
-                      setSelectedProfileUser(member);
-                    }}
-                    className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-slate-900/40 transition cursor-pointer group"
-                  >
-                    <div className="relative shrink-0">
-                      <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${member.avatarBg} border border-slate-800 flex items-center justify-center text-[10px] font-semibold text-slate-400`}>
-                        {member.initials}
+                <div className="space-y-1 pt-1">
+                  {regularMembers.slice(0, 15).map((member) => (
+                    <div
+                      key={member.id}
+                      onClick={() => {
+                        sounds.playClick();
+                        setSelectedProfileUser(member);
+                      }}
+                      className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-slate-900/40 transition cursor-pointer group"
+                    >
+                      <div className="relative shrink-0">
+                        <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${member.avatarBg} border border-slate-800 flex items-center justify-center text-[10px] font-semibold text-slate-400`}>
+                          {member.initials}
+                        </div>
+                        {member.status === 'online' && (
+                          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-[#090d16]" />
+                        )}
                       </div>
-                      {member.status === 'online' && (
-                        <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-400 ring-2 ring-[#090d16]" />
-                      )}
-                    </div>
 
-                    <div className="min-w-0 flex-1">
-                      <div className="text-xs text-slate-300 group-hover:text-slate-100 truncate">
-                        {member.name}
-                      </div>
-                      <div className="text-[10px] text-slate-400 truncate">
-                        {member.roleTitle}
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs text-slate-300 group-hover:text-slate-100 truncate">
+                          {member.name}
+                        </div>
+                        <div className="text-[10px] text-slate-400 truncate">
+                          {member.roleTitle}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
           </div>
         </aside>
@@ -952,6 +940,7 @@ export default function App() {
         deals={deals}
         currentUser={currentUser}
         onCommitAllocation={handleCommitAllocation}
+        onCreateDeal={handleCreateDeal}
       />
 
       {/* Interactive Ecosystem Quest */}
