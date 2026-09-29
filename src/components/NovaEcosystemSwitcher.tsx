@@ -34,7 +34,7 @@ export const NOVA_ECOSYSTEM = [
     name: 'NOVA Community',
     tagline: 'Private Creator Syndicate & OTC Desk',
     url: 'https://novacommunity.vercel.app',
-    color: 'from-amber-500 to-orange-600',
+    color: 'from-cyan-500 to-blue-600',
     badge: 'SYNDICATE',
     icon: Users,
     isCurrent: true,
@@ -78,23 +78,23 @@ export const NovaEcosystemSwitcher: React.FC<{ currentId?: string }> = ({ curren
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-xs font-mono text-amber-300 hover:text-white transition-all shadow-[0_0_12px_rgba(245,158,11,0.2)] cursor-pointer"
+        className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-xs font-mono text-cyan-300 hover:text-white transition-all shadow-[0_0_12px_rgba(6,182,212,0.2)] cursor-pointer"
       >
-        <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+        <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
         <span className="font-semibold tracking-wide hidden sm:inline">NOVA Matrix</span>
-        <ChevronDown className={`w-3.5 h-3.5 text-amber-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-3.5 h-3.5 text-cyan-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 mt-2 w-72 rounded-2xl bg-[#090d18]/95 backdrop-blur-2xl border border-amber-500/30 p-2 shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-50 animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute left-0 mt-2 w-72 rounded-2xl bg-[#090d18]/95 backdrop-blur-2xl border border-cyan-500/30 p-2 shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-50 animate-in fade-in zoom-in-95 duration-150">
           <div className="px-3 py-2 border-b border-white/10 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Layers className="w-4 h-4 text-amber-400" />
+              <Layers className="w-4 h-4 text-cyan-400" />
               <span className="text-[11px] font-mono uppercase tracking-widest text-zinc-300 font-bold">
                 NOVA 5-Platform Matrix
               </span>
             </div>
-            <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">
+            <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
               Live
             </span>
           </div>
@@ -112,7 +112,7 @@ export const NovaEcosystemSwitcher: React.FC<{ currentId?: string }> = ({ curren
                   rel="noopener noreferrer"
                   className={`flex items-start gap-3 p-2.5 rounded-xl transition-all cursor-pointer ${
                     isCurrent 
-                      ? 'bg-amber-500/15 border border-amber-500/40 text-white' 
+                      ? 'bg-cyan-500/15 border border-cyan-500/40 text-white' 
                       : 'hover:bg-white/5 border border-transparent text-zinc-400 hover:text-white'
                   }`}
                   onClick={() => setIsOpen(false)}
@@ -138,7 +138,7 @@ export const NovaEcosystemSwitcher: React.FC<{ currentId?: string }> = ({ curren
                   </div>
 
                   {!isCurrent && (
-                    <ExternalLink className="w-3.5 h-3.5 text-zinc-500 mt-1 shrink-0 group-hover:text-amber-400" />
+                    <ExternalLink className="w-3.5 h-3.5 text-zinc-500 mt-1 shrink-0 group-hover:text-cyan-400" />
                   )}
                 </a>
               );

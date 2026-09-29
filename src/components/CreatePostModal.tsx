@@ -72,12 +72,12 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-2xl animate-in fade-in duration-200">
       
       {/* Background ambient gold vignette */}
-      <div className="absolute w-[500px] h-[500px] bg-amber-500/[0.04] rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute w-[500px] h-[500px] bg-cyan-500/[0.04] rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="relative w-full max-w-lg bg-zinc-950/95 border border-amber-500/30 backdrop-blur-2xl rounded-2xl shadow-[0_0_60px_rgba(0,0,0,0.95),0_0_30px_rgba(245,158,11,0.15)] overflow-hidden">
+      <div className="relative w-full max-w-lg bg-zinc-950/95 border border-cyan-500/30 backdrop-blur-2xl rounded-2xl shadow-[0_0_60px_rgba(0,0,0,0.95),0_0_30px_rgba(245,158,11,0.15)] overflow-hidden">
         
         {/* Gold hairline */}
-        <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-amber-400/80 to-transparent" />
+        <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-cyan-400/80 to-transparent" />
 
         <button
           onClick={() => {
@@ -92,7 +92,7 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
 
         <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-5">
           <div className="space-y-1">
-            <span className="text-xs font-mono uppercase tracking-wider text-amber-400 font-semibold block">
+            <span className="text-xs font-mono uppercase tracking-wider text-cyan-400 font-semibold block">
               SYNDICATE BROADCAST CONSOLE
             </span>
             <h3 className="font-sans text-xl sm:text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-2">
@@ -105,13 +105,13 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
 
           {/* User badge */}
           <div className="flex items-center gap-3 p-3 bg-zinc-900/60 border border-zinc-800/80 rounded-xl">
-            <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${currentUser.avatarBg} border border-amber-500/40 flex items-center justify-center text-xs font-semibold text-zinc-200 shrink-0`}>
+            <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${currentUser.avatarBg} border border-cyan-500/40 flex items-center justify-center text-xs font-semibold text-zinc-200 shrink-0`}>
               {currentUser.initials}
             </div>
             <div className="min-w-0 flex-1">
               <div className="text-xs font-semibold text-zinc-200 flex items-center gap-1.5 truncate">
                 <span>{currentUser.name}</span>
-                <span className="text-xs text-amber-400/90 font-medium">[{currentUser.rank.toUpperCase()}]</span>
+                <span className="text-xs text-cyan-400/90 font-medium">[{currentUser.rank.toUpperCase()}]</span>
               </div>
               <div className="text-xs text-zinc-400 truncate">{currentUser.tier} · {currentUser.passId}</div>
             </div>
@@ -127,7 +127,7 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
               value={transmissionTitle}
               onChange={(e) => setTransmissionTitle(e.target.value)}
               placeholder="e.g. Q4 Alpha Liquidity Mandate & Autonomous Video Agents"
-              className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-amber-500/50 font-sans"
+              className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-cyan-500/50 font-sans"
             />
           </div>
 
@@ -140,7 +140,7 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
               <select
                 value={selectedChannelId}
                 onChange={(e) => setSelectedChannelId(e.target.value)}
-                className="w-full appearance-none bg-zinc-900/80 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-amber-300 focus:outline-none focus:border-amber-500/50 cursor-pointer"
+                className="w-full appearance-none bg-zinc-900/80 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-cyan-300 focus:outline-none focus:border-cyan-500/50 cursor-pointer"
               >
                 {availableChannels
                   .filter((c) => c.id !== 'arena-overview')
@@ -170,7 +170,7 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
               value={intelContentPayload}
               onChange={(e) => setIntelContentPayload(e.target.value)}
               placeholder="Enter verified operational findings, pricing models, programmatic pipelines, or confidential strategic allocation details..."
-              className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl p-3.5 text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-amber-500/50 resize-none leading-relaxed font-sans"
+              className="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl p-3.5 text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-cyan-500/50 resize-none leading-relaxed font-sans"
             />
           </div>
 
@@ -178,14 +178,14 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
           <div className="space-y-3 pt-1 border-t border-zinc-900">
             <div className="flex items-center justify-between">
               <span className="text-xs font-mono text-zinc-400 flex items-center gap-1.5">
-                <TrendingUp className="w-3.5 h-3.5 text-amber-400" />
+                <TrendingUp className="w-3.5 h-3.5 text-cyan-400" />
                 Attach Audited Deal / Revenue Proof
               </span>
               <button
                 type="button"
                 onClick={() => setIncludeMetric(!includeMetric)}
                 className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  includeMetric ? 'bg-amber-500' : 'bg-zinc-800'
+                  includeMetric ? 'bg-cyan-500' : 'bg-zinc-800'
                 }`}
               >
                 <span
@@ -197,13 +197,13 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
             </div>
 
             {includeMetric && (
-              <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-amber-500/20 space-y-3 animate-in fade-in duration-200">
+              <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-cyan-500/20 space-y-3 animate-in fade-in duration-200">
                 <input
                   type="text"
                   value={metricTitle}
                   onChange={(e) => setMetricTitle(e.target.value)}
                   placeholder="Metric Title (e.g. Q4 Secondary Liquidity Pool)"
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-amber-500/40 font-mono"
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-cyan-500/40 font-mono"
                 />
                 <div className="grid grid-cols-2 gap-2">
                   <input
@@ -211,14 +211,14 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
                     value={metricVal}
                     onChange={(e) => setMetricVal(e.target.value)}
                     placeholder="Volume (e.g. $1,850,000)"
-                    className="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs text-amber-400 font-bold placeholder:text-zinc-600 focus:outline-none focus:border-amber-500/40 font-mono"
+                    className="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs text-cyan-400 font-bold placeholder:text-zinc-600 focus:outline-none focus:border-cyan-500/40 font-mono"
                   />
                   <input
                     type="text"
                     value={metricLabel}
                     onChange={(e) => setMetricLabel(e.target.value)}
                     placeholder="Label (e.g. Net Settled Volume)"
-                    className="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs text-zinc-300 placeholder:text-zinc-600 focus:outline-none focus:border-amber-500/40 font-mono"
+                    className="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs text-zinc-300 placeholder:text-zinc-600 focus:outline-none focus:border-cyan-500/40 font-mono"
                   />
                 </div>
               </div>
@@ -240,7 +240,7 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
             <button
               type="submit"
               disabled={!intelContentPayload.trim()}
-              className="px-5 py-2.5 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-300 text-black font-mono font-bold text-xs rounded-xl shadow-[0_0_20px_rgba(245,158,11,0.25)] flex items-center gap-2 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+              className="px-5 py-2.5 bg-gradient-to-r from-cyan-500 via-cyan-400 to-cyan-500 hover:from-cyan-400 hover:to-cyan-300 text-black font-mono font-bold text-xs rounded-xl shadow-[0_0_20px_rgba(245,158,11,0.25)] flex items-center gap-2 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <Send className="w-3.5 h-3.5" />
               <span>Broadcast Dispatch</span>

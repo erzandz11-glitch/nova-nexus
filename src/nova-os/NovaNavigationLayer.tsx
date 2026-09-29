@@ -84,10 +84,10 @@ export const NovaNavigationLayer: React.FC<NovaNavigationProps> = ({
       case 'community':
         return {
           glow: 'shadow-[0_0_15px_rgba(251,191,36,0.35)]',
-          border: 'border-amber-500/40',
-          text: 'text-amber-400',
-          bg: 'bg-amber-500/10',
-          accent: 'from-amber-400 to-orange-500',
+          border: 'border-cyan-500/40',
+          text: 'text-cyan-400',
+          bg: 'bg-cyan-500/10',
+          accent: 'from-cyan-400 to-orange-500',
         };
     }
   };
@@ -230,7 +230,7 @@ export const NovaNavigationLayer: React.FC<NovaNavigationProps> = ({
               className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-gradient-to-r from-white/[0.04] to-white/[0.02] border border-white/10 text-xs font-mono cursor-pointer hover:border-white/20 transition-all"
               title="NOVA User XP"
             >
-              <Zap className="w-3.5 h-3.5 text-amber-400 fill-amber-400/30" />
+              <Zap className="w-3.5 h-3.5 text-cyan-400 fill-cyan-400/30" />
               <span className="font-bold text-white">{xpValue.toLocaleString()}</span>
               {xpLevel !== undefined && (
                 <span className="text-[10px] text-zinc-500 hidden sm:inline">Lv.{xpLevel}</span>

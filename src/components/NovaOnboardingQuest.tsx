@@ -105,7 +105,7 @@ const QUEST_STEPS: QuestStep[] = [
     actionUrl: '#',
     external: false,
     icon: Users,
-    gradient: 'from-amber-400 via-orange-500 to-yellow-500',
+    gradient: 'from-cyan-400 via-orange-500 to-yellow-500',
     badge: 'STAGE 5: SYNDICATE',
     rewardXP: 100,
   },
@@ -161,15 +161,15 @@ export const NovaOnboardingQuest: React.FC = () => {
           sounds.playClick();
           setIsOpen(true);
         }}
-        className="fixed bottom-6 right-6 z-40 group flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-zinc-950/90 hover:bg-zinc-900 border border-amber-500/40 hover:border-amber-400 text-xs font-mono text-white shadow-[0_0_25px_rgba(245,158,11,0.35)] backdrop-blur-xl transition-all duration-300 hover:scale-105 cursor-pointer"
+        className="fixed bottom-6 right-6 z-40 group flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-zinc-950/90 hover:bg-zinc-900 border border-cyan-500/40 hover:border-cyan-400 text-xs font-mono text-white shadow-[0_0_25px_rgba(245,158,11,0.35)] backdrop-blur-xl transition-all duration-300 hover:scale-105 cursor-pointer"
         title="Buka Peta Ekosistem & Onboarding Quest NOVA"
       >
-        <div className="relative flex items-center justify-center w-6 h-6 rounded-full bg-amber-500/20 text-amber-300">
+        <div className="relative flex items-center justify-center w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-300">
           <Compass className="w-3.5 h-3.5 animate-spin duration-3000" />
-          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
         </div>
         <div className="flex flex-col text-left leading-none">
-          <span className="font-bold text-[11px] text-amber-300">Ecosystem Quest</span>
+          <span className="font-bold text-[11px] text-cyan-300">Ecosystem Quest</span>
           <span className="text-[9px] text-zinc-400 mt-0.5">
             {completedSteps.length}/{QUEST_STEPS.length} Selesai ({progressPercent}%)
           </span>
@@ -179,21 +179,21 @@ export const NovaOnboardingQuest: React.FC = () => {
       {/* Main Quest Modal Overlay */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="relative w-full max-w-2xl rounded-3xl bg-[#080c18] border border-amber-500/30 p-6 sm:p-8 shadow-[0_25px_70px_rgba(0,0,0,0.9)] overflow-hidden text-zinc-100">
+          <div className="relative w-full max-w-2xl rounded-3xl bg-[#080c18] border border-cyan-500/30 p-6 sm:p-8 shadow-[0_25px_70px_rgba(0,0,0,0.9)] overflow-hidden text-zinc-100">
             {/* Ambient Background Light */}
-            <div className="pointer-events-none absolute -top-24 -right-24 w-72 h-72 rounded-full bg-amber-500/15 blur-[80px]" />
+            <div className="pointer-events-none absolute -top-24 -right-24 w-72 h-72 rounded-full bg-cyan-500/15 blur-[80px]" />
             <div className="pointer-events-none absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-cyan-600/15 blur-[80px]" />
 
             {/* Header Area */}
             <div className="flex items-center justify-between pb-4 border-b border-white/10 relative z-10">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-amber-950/60 border border-amber-500/40 flex items-center justify-center text-amber-300 shadow-md">
+                <div className="w-9 h-9 rounded-xl bg-cyan-950/60 border border-cyan-500/40 flex items-center justify-center text-cyan-300 shadow-md">
                   <Compass className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="font-mono text-base font-bold text-white flex items-center gap-2">
                     <span>NOVA ECOSYSTEM QUEST</span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
                       5-Step Journey
                     </span>
                   </h3>
@@ -217,8 +217,8 @@ export const NovaOnboardingQuest: React.FC = () => {
             {/* Progress Bar & Station Dots */}
             <div className="py-4 space-y-2 relative z-10">
               <div className="flex items-center justify-between text-xs font-mono text-zinc-400">
-                <span className="flex items-center gap-1.5 text-amber-300">
-                  <Zap className="w-3.5 h-3.5 text-amber-400" />
+                <span className="flex items-center gap-1.5 text-cyan-300">
+                  <Zap className="w-3.5 h-3.5 text-cyan-400" />
                   Station {currentStep.stationNumber} dari 5: {currentStep.platform}
                 </span>
                 <span className="text-zinc-400">{progressPercent}% Completed</span>
@@ -226,7 +226,7 @@ export const NovaOnboardingQuest: React.FC = () => {
 
               <div className="w-full h-2 rounded-full bg-zinc-900 overflow-hidden p-0.5 border border-white/5">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-cyan-500 transition-all duration-500 shadow-[0_0_10px_rgba(245,158,11,0.8)]"
+                  className="h-full rounded-full bg-gradient-to-r from-cyan-400 via-orange-500 to-cyan-500 transition-all duration-500 shadow-[0_0_10px_rgba(245,158,11,0.8)]"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
@@ -246,7 +246,7 @@ export const NovaOnboardingQuest: React.FC = () => {
                       }}
                       className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono transition-all cursor-pointer ${
                         isCurrent
-                          ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50 font-bold shadow-sm'
+                          ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 font-bold shadow-sm'
                           : isDone
                           ? 'text-emerald-400 hover:bg-emerald-500/10'
                           : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'
@@ -265,7 +265,7 @@ export const NovaOnboardingQuest: React.FC = () => {
             </div>
 
             {/* Active Card Body */}
-            <div className="mt-2 p-5 rounded-2xl bg-[#0f1424]/90 border border-amber-500/20 relative z-10">
+            <div className="mt-2 p-5 rounded-2xl bg-[#0f1424]/90 border border-cyan-500/20 relative z-10">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <div className={`w-12 h-12 rounded-2xl bg-gradient-to-tr ${currentStep.gradient} p-0.5 shadow-lg`}>
@@ -274,7 +274,7 @@ export const NovaOnboardingQuest: React.FC = () => {
                     </div>
                   </div>
                   <div>
-                    <span className="text-[10px] font-mono tracking-widest text-amber-400 uppercase font-semibold">
+                    <span className="text-[10px] font-mono tracking-widest text-cyan-400 uppercase font-semibold">
                       {currentStep.badge}
                     </span>
                     <h4 className="text-base sm:text-lg font-bold text-white tracking-tight">
@@ -283,8 +283,8 @@ export const NovaOnboardingQuest: React.FC = () => {
                   </div>
                 </div>
 
-                <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/30 shrink-0 flex items-center gap-1 font-bold">
-                  <Trophy className="w-3 h-3 text-amber-400" />
+                <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 shrink-0 flex items-center gap-1 font-bold">
+                  <Trophy className="w-3 h-3 text-cyan-400" />
                   +{currentStep.rewardXP} XP
                 </span>
               </div>
@@ -333,9 +333,9 @@ export const NovaOnboardingQuest: React.FC = () => {
 
             {/* Grand Completion Reward Banner */}
             {isAllCompleted && (
-              <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-purple-500/15 to-cyan-500/15 border border-amber-500/40 flex items-center justify-between gap-4 animate-in zoom-in-95 relative z-10">
+              <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-cyan-500/15 via-purple-500/15 to-cyan-500/15 border border-cyan-500/40 flex items-center justify-between gap-4 animate-in zoom-in-95 relative z-10">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-400 flex items-center justify-center text-amber-300 shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-300 shrink-0">
                     <Trophy className="w-5 h-5 animate-bounce" />
                   </div>
                   <div>
@@ -355,7 +355,7 @@ export const NovaOnboardingQuest: React.FC = () => {
                   className={`px-3.5 py-2 rounded-xl text-xs font-bold font-mono transition shadow-lg shrink-0 cursor-pointer ${
                     claimedReward
                       ? 'bg-emerald-500/30 text-emerald-300 border border-emerald-500/50 cursor-default'
-                      : 'bg-gradient-to-r from-amber-400 to-orange-500 text-black hover:scale-105'
+                      : 'bg-gradient-to-r from-cyan-400 to-orange-500 text-black hover:scale-105'
                   }`}
                 >
                   {claimedReward ? '✓ Reward Diklaim' : 'Klaim Badge'}
@@ -388,7 +388,7 @@ export const NovaOnboardingQuest: React.FC = () => {
                     markStepComplete(currentStep.id);
                     setCurrentStepIndex((prev) => Math.min(QUEST_STEPS.length - 1, prev + 1));
                   }}
-                  className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-xs font-bold text-amber-300 border border-amber-500/50 cursor-pointer"
+                  className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-xs font-bold text-cyan-300 border border-cyan-500/50 cursor-pointer"
                 >
                   <span>Lanjut</span>
                   <ArrowRight className="w-3.5 h-3.5" />

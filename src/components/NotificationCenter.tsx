@@ -21,9 +21,9 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
   const getIcon = (type: SyndicateNotification['type']) => {
     switch (type) {
       case 'escrow':
-        return <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />;
+        return <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />;
       case 'rank':
-        return <Trophy className="w-3.5 h-3.5 text-amber-300" />;
+        return <Trophy className="w-3.5 h-3.5 text-cyan-300" />;
       case 'boost':
         return <Sparkles className="w-3.5 h-3.5 text-emerald-400" />;
       case 'deal':
@@ -32,12 +32,12 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
   };
 
   return (
-    <div className="absolute right-0 top-12 z-50 w-80 sm:w-96 rounded-2xl bg-[#09090c] border border-amber-500/30 shadow-[0_10px_40px_rgba(0,0,0,0.8),0_0_20px_rgba(245,158,11,0.1)] overflow-hidden animate-in fade-in duration-150">
+    <div className="absolute right-0 top-12 z-50 w-80 sm:w-96 rounded-2xl bg-[#09090c] border border-cyan-500/30 shadow-[0_10px_40px_rgba(0,0,0,0.8),0_0_20px_rgba(245,158,11,0.1)] overflow-hidden animate-in fade-in duration-150">
       
       {/* Header */}
       <div className="p-4 border-b border-zinc-900 flex items-center justify-between bg-black/40">
         <div className="flex items-center gap-2">
-          <Bell className="w-4 h-4 text-amber-400" />
+          <Bell className="w-4 h-4 text-cyan-400" />
           <span className="font-sans text-xs font-extrabold tracking-wider text-zinc-100">
             SYNDICATE DISPATCHES
           </span>
@@ -49,7 +49,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
               sounds.playClick();
               onMarkAllAsRead();
             }}
-            className="text-xs text-zinc-400 hover:text-amber-300 transition-colors"
+            className="text-xs text-zinc-400 hover:text-cyan-300 transition-colors"
           >
             Mark all read
           </button>

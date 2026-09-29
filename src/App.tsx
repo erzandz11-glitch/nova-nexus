@@ -366,62 +366,61 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen w-full bg-[#04060c] text-zinc-100 overflow-hidden font-sans select-none antialiased">
+    <div className="flex flex-col h-screen w-full bg-[#080a0f] text-slate-100 overflow-hidden font-sans select-none antialiased">
       
       {/* Main App Container */}
       <div className="flex-1 flex overflow-hidden relative">
 
         {/* ========================================================================= */}
-        {/* COLUMN 1: Channels List (Collapsible on <1024px)                          */}
+        {/* COLUMN 1: Channels List (Discord-Inspired Sleek Navigation)              */}
         {/* ========================================================================= */}
         <aside
-          className={`fixed inset-y-0 left-0 z-40 w-[280px] bg-[#070912] border-r border-zinc-800/80 flex flex-col transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
+          className={`fixed inset-y-0 left-0 z-40 w-[260px] bg-[#0b0e14] border-r border-white/[0.06] flex flex-col transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
             isMobileNavOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'
           }`}
         >
           {/* Syndicate Wordmark & Header */}
-          <div className="h-16 px-5 border-b border-zinc-800/80 flex items-center justify-between shrink-0 bg-black/30">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full p-[1px] bg-gradient-to-tr from-cyan-400 via-blue-500 to-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
-                <img src="/nova-logo.jpg" alt="NOVA Logo" className="w-full h-full object-cover rounded-full scale-105" />
+          <div className="h-14 px-4 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-[#090b10]">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-full p-[1px] bg-gradient-to-tr from-cyan-500/80 to-blue-500/40">
+                <img src="/nova-logo.jpg" alt="NOVA Logo" className="w-full h-full object-cover rounded-full" />
               </div>
               <div>
-                <div className="font-sans text-sm font-extrabold tracking-tight text-zinc-100 flex items-center gap-1.5">
+                <div className="font-sans text-sm font-bold tracking-tight text-white flex items-center gap-1.5">
                   <span>NOVA</span>
-                  <span className="text-xs text-amber-400 font-mono font-medium">COMMUNITY</span>
+                  <span className="text-[10px] text-cyan-400 font-mono font-medium px-1 py-0.2 rounded bg-cyan-400/10">COMMUNITY</span>
                 </div>
-                <div className="text-xs text-zinc-400 font-normal">Private Creator Guild</div>
               </div>
             </div>
 
-            {/* Close drawer on mobile & tablet */}
+            {/* Close drawer on mobile */}
             <button
               onClick={() => setIsMobileNavOpen(false)}
-              className="lg:hidden p-1.5 text-zinc-400 hover:text-zinc-200 cursor-pointer rounded-lg hover:bg-zinc-900"
-              aria-label="Close navigation drawer"
+              className="lg:hidden p-1.5 text-zinc-400 hover:text-white cursor-pointer rounded-lg hover:bg-zinc-800"
+              aria-label="Close navigation"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
 
           {/* Channels Navigation Scroll */}
-          <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
+          <div className="flex-1 overflow-y-auto px-2.5 py-3 space-y-5">
             
             {/* Quick Nav: The Arena Highlight Button */}
-            <div className="px-1">
+            <div>
               <button
                 onClick={handleOpenArena}
-                className={`w-full group relative flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all cursor-pointer ${
+                className={`w-full group flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   activeView === 'arena'
-                    ? 'bg-gradient-to-r from-amber-500/25 via-amber-500/15 to-transparent border border-amber-500/50 text-amber-300 shadow-[0_0_20px_rgba(245,158,11,0.2)]'
-                    : 'bg-zinc-900/50 hover:bg-zinc-900/90 border border-zinc-800 text-zinc-300 hover:text-amber-200'
+                    ? 'bg-cyan-400/15 text-cyan-300 border border-cyan-500/30 shadow-sm'
+                    : 'bg-white/[0.03] hover:bg-white/[0.06] border border-transparent text-zinc-300 hover:text-white'
                 }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <Trophy className={`w-4 h-4 ${activeView === 'arena' ? 'text-amber-400' : 'text-zinc-400 group-hover:text-amber-400'}`} />
-                  <span className="font-sans text-xs font-bold tracking-wider">THE ARENA</span>
+                <div className="flex items-center gap-2">
+                  <Trophy className={`w-3.5 h-3.5 ${activeView === 'arena' ? 'text-cyan-400' : 'text-zinc-400 group-hover:text-cyan-400'}`} />
+                  <span className="tracking-wide">THE ARENA</span>
                 </div>
-                <span className="text-xs font-medium px-2 py-0.5 rounded bg-amber-400/10 text-amber-400 border border-amber-500/20">
+                <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-cyan-400/10 text-cyan-400">
                   LIVE
                 </span>
               </button>
@@ -434,152 +433,66 @@ export default function App() {
               );
 
               return (
-                <React.Fragment key={category}>
-                  <div className="space-y-1">
-                    <div className="px-3 text-xs font-semibold uppercase tracking-wider text-zinc-400 flex items-center justify-between">
-                      <span>{category}</span>
-                    </div>
-
-                    <div className="space-y-0.5 pt-1">
-                      {channelGroup.map((channel) => {
-                        const isActive = activeView === 'feed' && activeChannelId === channel.id;
-                        const isLocked = channel.isRestricted && !unlockedChannels.includes(channel.id);
-
-                        return (
-                          <button
-                            key={channel.id}
-                            onClick={() => handleSelectChannel(channel)}
-                            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium transition-all duration-150 text-left cursor-pointer group ${
-                              isActive
-                                ? 'bg-zinc-800/90 text-zinc-100 border border-zinc-700/70 shadow-sm'
-                                : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60 border border-transparent'
-                            }`}
-                          >
-                            <div className="flex items-center gap-2.5 truncate">
-                              <span className="text-sm shrink-0">{channel.symbol}</span>
-                              <span className="truncate">{channel.name}</span>
-                            </div>
-
-                            {channel.unreadCount ? (
-                              <span className="shrink-0 text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold">
-                                {channel.unreadCount}
-                              </span>
-                            ) : isLocked ? (
-                              <div className="flex items-center gap-1 text-xs text-amber-400/90 font-medium">
-                                <Lock className="w-3.5 h-3.5 text-amber-400/80 shrink-0" />
-                                <span>VIP</span>
-                              </div>
-                            ) : null}
-                          </button>
-                        );
-                      })}
-                    </div>
+                <div key={category} className="space-y-1">
+                  <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+                    {category}
                   </div>
 
-                  {/* DIRECT TRANSMISSIONS SECTION */}
-                  {category === 'Alpha & Intelligence' && (
-                    <div className="space-y-1.5 pt-1">
-                      <div className="px-3 text-xs font-semibold uppercase tracking-wider text-zinc-400 flex items-center justify-between">
-                        <span className="flex items-center gap-1.5 text-amber-400/90">
-                          <Radio className="w-3.5 h-3.5 text-amber-400" />
-                          DIRECT TRANSMISSIONS
-                        </span>
-                        <span className="text-xs text-emerald-400 font-medium">
-                          Active
-                        </span>
-                      </div>
+                  <div className="space-y-0.5 pt-0.5">
+                    {channelGroup.map((channel) => {
+                      const isActive = activeView === 'feed' && activeChannelId === channel.id;
+                      const isLocked = channel.isRestricted && !unlockedChannels.includes(channel.id);
 
-                      <div className="space-y-2 pt-1 px-1">
-                        {/* Telegram Signals */}
-                        <a
-                          href="https://t.me/novasyndicate"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={() => sounds.playClick()}
-                          className="group relative flex items-center justify-between p-2.5 rounded-xl bg-zinc-900/40 hover:bg-zinc-900/80 border border-zinc-800/80 hover:border-amber-500/50 backdrop-blur-2xl transition-all duration-200 cursor-pointer shadow-sm"
+                      return (
+                        <button
+                          key={channel.id}
+                          onClick={() => handleSelectChannel(channel)}
+                          className={`w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs font-medium transition-all text-left cursor-pointer group ${
+                            isActive
+                              ? 'bg-white/[0.08] text-white font-semibold'
+                              : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03]'
+                          }`}
                         >
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <div className="w-7 h-7 rounded-lg bg-[#229ED9]/15 border border-[#229ED9]/30 flex items-center justify-center text-[#229ED9] group-hover:scale-105 group-hover:border-[#229ED9]/60 transition-all shrink-0">
-                              <TelegramIcon className="w-3.5 h-3.5" />
-                            </div>
-                            <div className="min-w-0">
-                              <div className="text-xs font-semibold text-zinc-200 group-hover:text-amber-300 transition-colors flex items-center gap-1">
-                                <span className="truncate">Telegram Signals</span>
-                                <ExternalLink className="w-3 h-3 text-zinc-500 group-hover:text-amber-400/80 shrink-0" />
-                              </div>
-                              <div className="text-xs text-zinc-400 flex items-center gap-1.5 truncate">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
-                                <span className="text-emerald-400 font-medium">Live</span>
-                                <span className="text-zinc-600">·</span>
-                                <span>Signals</span>
-                              </div>
-                            </div>
+                          <div className="flex items-center gap-2 truncate">
+                            <span className="text-zinc-500 group-hover:text-zinc-400 text-sm shrink-0">#</span>
+                            <span className="truncate">{channel.name}</span>
                           </div>
 
-                          <div className="shrink-0 flex items-center pl-1">
-                            <span className="text-xs text-emerald-400 font-medium px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30">
-                              Joined
+                          {channel.unreadCount ? (
+                            <span className="shrink-0 text-[10px] px-1.5 py-0.2 rounded-full bg-cyan-500/20 text-cyan-300 font-semibold">
+                              {channel.unreadCount}
                             </span>
-                          </div>
-                        </a>
-
-                        {/* Discord Guild VIP */}
-                        <a
-                          href="https://discord.gg/novasyndicate"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={() => sounds.playClick()}
-                          className="group relative flex items-center justify-between p-2.5 rounded-xl bg-zinc-900/40 hover:bg-zinc-900/80 border border-zinc-800/80 hover:border-amber-500/50 backdrop-blur-2xl transition-all duration-200 cursor-pointer shadow-sm"
-                        >
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <div className="w-7 h-7 rounded-lg bg-[#5865F2]/15 border border-[#5865F2]/30 flex items-center justify-center text-[#5865F2] group-hover:scale-105 group-hover:border-[#5865F2]/60 transition-all shrink-0">
-                              <DiscordIcon className="w-3.5 h-3.5" />
-                            </div>
-                            <div className="min-w-0">
-                              <div className="text-xs font-semibold text-zinc-200 group-hover:text-amber-300 transition-colors flex items-center gap-1">
-                                <span className="truncate">Discord Guild VIP</span>
-                                <ExternalLink className="w-3 h-3 text-zinc-500 group-hover:text-amber-400/80 shrink-0" />
-                              </div>
-                              <div className="text-xs text-zinc-400 flex items-center gap-1.5 truncate">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
-                                <span className="text-zinc-300 font-medium">1,420 Active</span>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="shrink-0 flex items-center pl-1">
-                            <span className="text-xs text-zinc-300 font-medium px-2 py-0.5 rounded bg-zinc-800/80 border border-zinc-700/60">
-                              Online
-                            </span>
-                          </div>
-                        </a>
-                      </div>
-                    </div>
-                  )}
-                </React.Fragment>
+                          ) : isLocked ? (
+                            <Lock className="w-3 h-3 text-zinc-500 shrink-0" />
+                          ) : null}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               );
             })}
           </div>
 
-          {/* Column 1 Footer: Current User Concierge Card */}
-          <div className="p-3.5 border-t border-zinc-800/80 bg-[#070912] shrink-0">
+          {/* Column 1 Footer: Compact Discord-Style User Bar */}
+          <div className="p-2 border-t border-white/[0.06] bg-[#090b10] shrink-0">
             <div
               onClick={() => {
                 sounds.playClick();
                 setSelectedProfileUser(currentUser);
               }}
-              className="group flex items-center justify-between p-3 rounded-xl border border-zinc-800/90 hover:border-amber-500/50 bg-zinc-950/90 hover:bg-zinc-900/90 transition-all cursor-pointer shadow-sm"
+              className="flex items-center justify-between p-1.5 rounded-lg hover:bg-white/[0.04] transition-all cursor-pointer"
             >
-              <div className="flex items-center gap-3 min-w-0">
-                <div className={`relative w-10 h-10 rounded-xl bg-gradient-to-br ${currentUser.avatarBg} border border-amber-500/50 flex items-center justify-center text-xs font-bold text-zinc-100 shrink-0 shadow-sm`}>
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className={`relative w-8 h-8 rounded-full bg-gradient-to-br ${currentUser.avatarBg} border border-cyan-400/40 flex items-center justify-center text-xs font-bold text-white shrink-0`}>
                   {currentUser.initials}
-                  <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-zinc-950" />
+                  <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-[#090b10]" />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-sm font-bold text-zinc-100 group-hover:text-amber-300 font-sans tracking-tight transition-colors truncate">
+                  <div className="text-xs font-semibold text-white truncate">
                     {currentUser.name}
                   </div>
-                  <div className="text-xs font-mono text-zinc-400 truncate">
+                  <div className="text-[10px] text-zinc-500 truncate">
                     {currentUser.passId}
                   </div>
                 </div>
@@ -591,10 +504,10 @@ export default function App() {
                   sounds.playClick();
                   setIsVIPModalOpen(true);
                 }}
-                title="Verify VIP Card / Protocol Access"
-                className="p-2 text-zinc-400 hover:text-amber-300 rounded-lg hover:bg-zinc-800/80 transition-all cursor-pointer shrink-0"
+                title="Protocol Card / Sovereign Pass"
+                className="p-1.5 text-zinc-400 hover:text-cyan-300 rounded hover:bg-white/[0.06] transition-all cursor-pointer shrink-0"
               >
-                <ShieldCheck className="w-4 h-4 text-amber-400" />
+                <ShieldCheck className="w-4 h-4 text-cyan-400" />
               </button>
             </div>
           </div>
@@ -609,154 +522,91 @@ export default function App() {
         )}
 
         {/* ========================================================================= */}
-        {/* COLUMN 2: Middle Flexible Area (Chat/Feed or The Arena)                  */}
+        {/* COLUMN 2: Middle Chat Stream / The Arena (Discord-Style Canvas)           */}
         {/* ========================================================================= */}
-        <main className="flex-1 flex flex-col min-w-0 bg-[#04060c] overflow-hidden relative w-full">
+        <main className="flex-1 flex flex-col min-w-0 bg-[#080a0f] overflow-hidden relative w-full">
           
-          {/* Top Bar */}
-          <header className="h-16 px-4 sm:px-6 border-b border-zinc-800/80 bg-[#070912]/95 backdrop-blur-xl flex items-center justify-between shrink-0 z-20 gap-3">
+          {/* Channel Top Bar */}
+          <header className="h-14 px-4 border-b border-white/[0.06] bg-[#0b0e14]/90 backdrop-blur-md flex items-center justify-between shrink-0 z-20 gap-3">
             
-            {/* Zone 1: Mobile Hamburger + Current Channel Title */}
-            <div className="flex items-center gap-3 shrink-0 min-w-0">
+            {/* Left: Channel Title & Info */}
+            <div className="flex items-center gap-2.5 min-w-0">
               <button
                 onClick={() => setIsMobileNavOpen(true)}
-                className="lg:hidden p-2 -ml-1 text-zinc-400 hover:text-zinc-200 rounded-xl hover:bg-zinc-900 cursor-pointer shrink-0"
-                aria-label="Toggle navigation menu"
+                className="lg:hidden p-1.5 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800 cursor-pointer shrink-0"
+                aria-label="Open channels"
               >
-                <Menu className="w-5 h-5" />
+                <Menu className="w-4 h-4" />
               </button>
 
-              <div className="flex items-center gap-2.5 shrink-0">
-                <span className="text-xl sm:text-2xl shrink-0">
-                  {activeView === 'arena' ? '⚔️' : activeChannel.symbol}
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-zinc-500 text-base shrink-0">
+                  {activeView === 'arena' ? '⚔️' : '#'}
                 </span>
-                
-                {/* Channel Title & Subtitle */}
-                <div className="shrink-0 flex flex-col justify-center">
-                  <h2 className="font-sans text-sm sm:text-base font-bold text-zinc-100 whitespace-nowrap tracking-tight flex items-center gap-2">
-                    <span>{activeView === 'arena' ? 'THE ARENA' : activeChannel.name.toUpperCase()}</span>
-                    {activeView === 'arena' ? (
-                      <span className="text-xs px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30 font-medium">
-                        LEADERBOARD
-                      </span>
-                    ) : (
-                      <span className="hidden md:inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded bg-zinc-900 text-zinc-400 border border-zinc-800 font-medium">
-                        {activeChannel.category}
-                      </span>
-                    )}
+                <div className="flex items-baseline gap-2 min-w-0">
+                  <h2 className="text-sm font-bold text-white tracking-tight truncate">
+                    {activeView === 'arena' ? 'The Arena' : activeChannel.name}
                   </h2>
-                  <span className="text-xs text-zinc-400 font-normal leading-relaxed whitespace-nowrap hidden lg:block">
-                    {activeView === 'arena'
-                      ? 'Audited Leaderboard & Revenue Volumes'
-                      : activeChannel.description}
+                  <span className="text-xs text-zinc-400 font-normal truncate hidden sm:inline">
+                    {activeView === 'arena' ? 'Leaderboard & Revenue Volumes' : activeChannel.description}
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Zone 2: Responsive Search Field */}
-            <div className="hidden md:flex items-center justify-center flex-1 px-2 lg:px-4 min-w-0">
+            {/* Right: Quick Controls */}
+            <div className="flex items-center gap-2 shrink-0">
+              {/* Search Bar */}
               {activeView !== 'arena' && (
-                <div className="relative w-full max-w-[220px] sm:max-w-xs">
-                  <Search className="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <div className="relative hidden md:block w-44 lg:w-56">
+                  <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                   <input
                     type="text"
                     value={chatSearch}
                     onChange={(e) => setChatSearch(e.target.value)}
-                    placeholder="Search messages..."
-                    className="w-full pl-8 pr-3 py-1.5 bg-zinc-900/80 border border-zinc-800 rounded-xl text-xs text-zinc-200 placeholder:text-zinc-500 focus:outline-none focus:border-amber-500/50"
+                    placeholder="Search..."
+                    className="w-full pl-8 pr-3 py-1 bg-black/40 border border-white/[0.06] rounded-md text-xs text-zinc-200 placeholder:text-zinc-400 focus:outline-none focus:border-cyan-500/40"
                   />
                 </div>
               )}
-            </div>
 
-            {/* Zone 3: Right Cluster */}
-            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-              
-              {/* Universal Command Trigger Button (Mobile & Desktop) */}
-              <button
-                onClick={() => {
-                  sounds.playClick();
-                  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true }));
-                }}
-                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-zinc-900/60 hover:bg-zinc-850 border border-amber-500/40 hover:border-amber-400 text-xs font-mono text-amber-300 hover:text-white transition shadow-sm cursor-pointer"
-                title="Open Universal Command Search (⌘K)"
-              >
-                <Search className="w-3.5 h-3.5 text-amber-400" />
-                <span className="hidden sm:inline">Search</span>
-                <kbd className="px-1.5 py-0.2 rounded bg-black/50 text-[10px] text-amber-300 border border-amber-500/30">
-                  ⌘K
-                </kbd>
-              </button>
-
-              <NovaEcosystemSwitcher currentId="community" />
-              
-              {/* Back to Feed button if in Arena view */}
+              {/* Back to Feed if in Arena */}
               {activeView === 'arena' && (
                 <button
                   onClick={handleBackToFeed}
-                  className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-zinc-700/80 hover:border-amber-500/50 bg-zinc-900/80 hover:bg-zinc-850 text-zinc-300 hover:text-amber-300 text-xs font-medium transition-all cursor-pointer whitespace-nowrap shrink-0"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/[0.05] hover:bg-white/[0.08] text-zinc-300 hover:text-white text-xs font-medium transition cursor-pointer"
                 >
-                  <ArrowLeft className="w-3.5 h-3.5 text-amber-400" />
+                  <ArrowLeft className="w-3.5 h-3.5" />
                   <span>Feed</span>
                 </button>
               )}
 
-              {/* Quick-Launch Telegram Signals */}
-              <a
-                href="https://t.me/novasyndicate"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => sounds.playClick()}
-                className="relative p-2 text-zinc-400 hover:text-[#229ED9] rounded-xl bg-zinc-900/60 hover:bg-zinc-900 border border-zinc-800/80 hover:border-[#229ED9]/50 transition-all duration-200 cursor-pointer shrink-0 group shadow-sm"
-                title="Telegram Signals"
-                aria-label="Telegram Signals Quick Launch"
-              >
-                <TelegramIcon className="w-4 h-4 fill-current group-hover:scale-110 transition-transform" />
-              </a>
-
-              {/* Quick-Launch Discord Guild VIP */}
-              <a
-                href="https://discord.gg/novasyndicate"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => sounds.playClick()}
-                className="relative p-2 text-zinc-400 hover:text-[#5865F2] rounded-xl bg-zinc-900/60 hover:bg-zinc-900 border border-zinc-800/80 hover:border-[#5865F2]/50 transition-all duration-200 cursor-pointer shrink-0 group shadow-sm"
-                title="Discord Guild VIP"
-                aria-label="Discord Guild VIP Quick Launch"
-              >
-                <DiscordIcon className="w-4 h-4 fill-current group-hover:scale-110 transition-transform" />
-              </a>
-
-              {/* Audio Toggle */}
+              {/* Sound Toggle */}
               <button
                 onClick={handleToggleAudio}
-                className="p-2 text-zinc-400 hover:text-zinc-200 rounded-xl bg-zinc-900/60 hover:bg-zinc-900 border border-zinc-800/80 hover:border-zinc-700 transition-colors cursor-pointer shrink-0"
-                title={audioEnabled ? 'Mute sound effects' : 'Enable sound effects'}
+                className="p-1.5 text-zinc-400 hover:text-zinc-200 rounded-md hover:bg-white/[0.05] transition cursor-pointer"
+                title={audioEnabled ? 'Mute audio' : 'Unmute audio'}
               >
                 {audioEnabled ? (
-                  <Volume2 className="w-4 h-4 text-amber-400" />
+                  <Volume2 className="w-4 h-4 text-cyan-400" />
                 ) : (
                   <VolumeX className="w-4 h-4 text-zinc-500" />
                 )}
               </button>
 
-              {/* Canonical NOVA ID & Google Auth */}
-              <NovaIdentityControl />
-
-              {/* Notification Center Trigger */}
-              <div className="relative shrink-0">
+              {/* Notification Center */}
+              <div className="relative">
                 <button
                   onClick={() => {
                     sounds.playClick();
                     setIsNotifOpen(!isNotifOpen);
                   }}
-                  className="relative p-2 text-zinc-400 hover:text-zinc-200 rounded-xl bg-zinc-900/60 hover:bg-zinc-900 border border-zinc-800/80 hover:border-zinc-700 transition-colors cursor-pointer"
-                  title="Syndicate Dispatches & Alerts"
+                  className="relative p-1.5 text-zinc-400 hover:text-zinc-200 rounded-md hover:bg-white/[0.05] transition cursor-pointer"
+                  title="Notifications"
                 >
                   <Bell className="w-4 h-4" />
                   {unreadNotifCount > 0 && (
-                    <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-amber-400 ring-2 ring-zinc-950" />
+                    <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-cyan-400 ring-2 ring-[#0b0e14]" />
                   )}
                 </button>
 
@@ -770,65 +620,26 @@ export default function App() {
                 />
               </div>
 
-              {/* VIP Status Badge */}
-              <button
-                onClick={() => {
-                  sounds.playClick();
-                  setIsVIPModalOpen(true);
-                }}
-                className="shrink-0 inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 rounded-xl border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 text-xs font-semibold tracking-tight transition-all cursor-pointer whitespace-nowrap"
-                title="Verify Sovereign Pass #0042 [VIP]"
-              >
-                <ShieldCheck className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                <span>Pass #0042 [VIP]</span>
-              </button>
+              {/* Identity Control */}
+              <NovaIdentityControl />
 
-              {/* Broadcast Dispatch button */}
-              <button
-                onClick={() => {
-                  sounds.playClick();
-                  setIsCreatePostOpen(true);
-                }}
-                className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-sans font-bold text-xs tracking-tight transition-all shadow-md cursor-pointer whitespace-nowrap"
-              >
-                <Plus className="w-3.5 h-3.5 shrink-0" />
-                <span className="hidden sm:inline">+ New Dispatch</span>
-                <span className="sm:hidden text-xs">Dispatch</span>
-              </button>
-
-              {/* Mobile & Tablet toggle for Members Roster Column (<1280px) */}
+              {/* Toggle Members Sidebar */}
               <button
                 onClick={() => {
                   sounds.playClick();
                   setIsMobileMembersOpen(!isMobileMembersOpen);
                 }}
-                className="xl:hidden p-2 text-zinc-400 hover:text-zinc-200 rounded-xl bg-zinc-900/60 hover:bg-zinc-900 border border-zinc-800/80 cursor-pointer shrink-0"
-                aria-label="Toggle syndicate members list"
+                className="p-1.5 text-zinc-400 hover:text-white rounded-md hover:bg-white/[0.05] transition cursor-pointer xl:hidden"
+                aria-label="Toggle members list"
               >
                 <Users className="w-4 h-4" />
               </button>
             </div>
           </header>
 
-          {/* Context Breadcrumbs Sub-Bar */}
-          <div className="border-b border-amber-900/30 bg-[#04060c]/90 px-4 sm:px-6 py-1.5 flex items-center overflow-x-auto no-scrollbar gap-1.5 text-[11px] font-mono text-zinc-400 shrink-0">
-            <span className="text-zinc-600 shrink-0 font-bold">NOVA OS</span>
-            <span className="text-zinc-700 shrink-0">/</span>
-            <span className="text-amber-400 font-semibold shrink-0">COMMUNITY</span>
-            <span className="text-zinc-700 shrink-0">/</span>
-            <span className="text-zinc-200 font-semibold shrink-0 uppercase">
-              {activeView === 'arena' ? 'THE ARENA' : activeChannel.name.toUpperCase()}
-            </span>
-            <span className="text-zinc-700 shrink-0">/</span>
-            <span className="text-zinc-400 shrink-0">
-              {activeView === 'arena' ? 'LEADERBOARD' : 'FEED'}
-            </span>
-          </div>
-
-          {/* Content View: The Arena OR Active Channel Feed */}
-          <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-5 sm:py-6 w-full">
+          {/* Main Feed / Content View */}
+          <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 space-y-4">
             {activeView === 'arena' ? (
-              /* ================= THE ARENA LEADERBOARD VIEW ================= */
               <TheArena
                 entries={leaderboard}
                 currentUser={currentUser}
@@ -837,172 +648,107 @@ export default function App() {
                 onBackToFeed={handleBackToFeed}
               />
             ) : (
-              /* ================= ACTIVE CHAT / FEED VIEW ================= */
-              <div className="w-full max-w-3xl mx-auto space-y-5 pb-24">
-                
-                {/* Channel Welcome Banner */}
-                <div className="p-5 sm:p-6 rounded-2xl border border-zinc-800/80 bg-gradient-to-b from-zinc-900/80 to-[#070912] space-y-2 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl sm:text-3xl shrink-0">{activeChannel.symbol}</span>
-                      <div>
-                        <h3 className="font-sans text-xl sm:text-2xl font-extrabold text-zinc-100 tracking-tight uppercase">
-                          {activeChannel.name}
-                        </h3>
-                        <p className="text-xs sm:text-sm text-zinc-400 font-normal leading-relaxed mt-0.5 max-w-xl">
-                          {activeChannel.description}
-                        </p>
-                      </div>
-                    </div>
-
-                    {activeChannel.id === 'deal-room-closed' && (
-                      <button
-                        onClick={() => setIsDealRoomOpen(true)}
-                        className="px-3.5 py-2 rounded-xl border border-amber-500/40 bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-sm transition-all shrink-0"
-                      >
-                        <Briefcase className="w-3.5 h-3.5 text-amber-400" />
-                        <span>Open Deal Desk</span>
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Interactive Quick Dispatch Bar */}
-                <form
-                  onSubmit={handleQuickDispatch}
-                  className="p-2.5 sm:p-3 rounded-2xl border border-zinc-800/90 focus-within:border-amber-500/60 focus-within:ring-1 focus-within:ring-amber-500/20 bg-zinc-950/90 backdrop-blur-xl transition-all duration-200 flex items-center gap-2.5 sm:gap-3.5 shadow-sm group"
-                >
-                  <div className={`relative w-9 h-9 rounded-xl bg-gradient-to-br ${currentUser.avatarBg} border border-amber-500/50 flex items-center justify-center text-xs font-bold text-zinc-100 shrink-0 ml-0.5 shadow-sm`}>
-                    {currentUser.initials}
-                    <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-zinc-950" />
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <input
-                      type="text"
-                      value={quickDispatchText}
-                      onChange={(e) => setQuickDispatchText(e.target.value)}
-                      placeholder={`Share tactical alpha or deal intelligence with #${activeChannel.name}...`}
-                      className="w-full bg-transparent text-xs sm:text-sm text-zinc-100 placeholder:text-zinc-500 font-sans focus:outline-none py-1"
+              <div className="max-w-4xl mx-auto space-y-3 pb-20">
+                {/* Messages list */}
+                {currentMessages.length > 0 ? (
+                  currentMessages.map((message) => (
+                    <FeedMessage
+                      key={message.id}
+                      message={message}
+                      currentUser={currentUser}
+                      onOpenProfile={(user) => setSelectedProfileUser(user)}
+                      onBoost={handleBoostMessage}
                     />
+                  ))
+                ) : (
+                  <div className="py-16 text-center space-y-2 text-zinc-500">
+                    <Sparkles className="w-6 h-6 mx-auto text-zinc-600" />
+                    <div className="text-sm font-medium text-zinc-400">No messages in this channel</div>
+                    <p className="text-xs text-zinc-500">Be the first to start the conversation!</p>
                   </div>
-
-                  <div className="flex items-center gap-2 shrink-0 pr-0.5">
-                    {/* Open full dispatch modal for metrics & custom titles */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        sounds.playClick();
-                        setIsCreatePostOpen(true);
-                      }}
-                      title="Open Full Transmission Console"
-                      className="p-2 text-zinc-500 hover:text-zinc-300 rounded-xl hover:bg-zinc-900 transition-colors cursor-pointer hidden sm:flex items-center"
-                    >
-                      <SlidersHorizontal className="w-4 h-4" />
-                    </button>
-
-                    {/* Submit Dispatch Button (Item 3: single crisp "+ Dispatch" button) */}
-                    <button
-                      type="submit"
-                      disabled={!quickDispatchText.trim()}
-                      className={`font-sans font-bold text-xs px-4 py-2 rounded-xl transition-all duration-150 flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
-                        quickDispatchText.trim()
-                          ? 'bg-amber-500 hover:bg-amber-400 text-black shadow-[0_0_20px_rgba(245,158,11,0.35)] hover:scale-[1.02]'
-                          : 'bg-amber-500/20 text-amber-300/60 border border-amber-500/30 opacity-70 cursor-not-allowed'
-                      }`}
-                    >
-                      <Plus className="w-3.5 h-3.5 shrink-0" />
-                      <span>+ Dispatch</span>
-                    </button>
-                  </div>
-                </form>
-
-                {/* Feed Messages List */}
-                <div className="space-y-4">
-                  {currentMessages.length > 0 ? (
-                    currentMessages.map((message) => (
-                      <FeedMessage
-                        key={message.id}
-                        message={message}
-                        currentUser={currentUser}
-                        onOpenProfile={(user) => setSelectedProfileUser(user)}
-                        onBoost={handleBoostMessage}
-                      />
-                    ))
-                  ) : (
-                    <div className="py-16 text-center space-y-3 rounded-2xl border border-dashed border-zinc-900">
-                      <Sparkles className="w-8 h-8 text-zinc-600 mx-auto" />
-                      <div className="text-sm font-semibold text-zinc-300">
-                        No dispatches found
-                      </div>
-                      <p className="text-xs text-zinc-500 max-w-xs mx-auto">
-                        {chatSearch
-                          ? 'Try clearing your search query.'
-                          : 'Be the first Sovereign member to initiate intelligence in this room.'}
-                      </p>
-                      <button
-                        onClick={() => {
-                          sounds.playClick();
-                          setIsCreatePostOpen(true);
-                        }}
-                        className="px-4 py-2 bg-zinc-900 border border-zinc-800 text-zinc-200 text-xs font-mono rounded-lg hover:border-amber-500/40 cursor-pointer"
-                      >
-                        Broadcast First Dispatch
-                      </button>
-                    </div>
-                  )}
-                </div>
-
+                )}
               </div>
             )}
           </div>
 
+          {/* Discord-Style Bottom Input Bar */}
+          {activeView === 'feed' && (
+            <div className="p-3 bg-[#080a0f] shrink-0">
+              <form
+                onSubmit={handleQuickDispatch}
+                className="max-w-4xl mx-auto rounded-xl bg-[#0e121a] border border-white/[0.06] focus-within:border-cyan-500/40 px-3.5 py-2.5 flex items-center gap-3 transition-colors shadow-sm"
+              >
+                {/* Attach / Create Full Post modal trigger */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    sounds.playClick();
+                    setIsCreatePostOpen(true);
+                  }}
+                  title="Attach metric or create rich post"
+                  className="p-1 text-zinc-400 hover:text-cyan-300 rounded hover:bg-white/[0.04] transition cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
+
+                {/* Input Text */}
+                <input
+                  type="text"
+                  value={quickDispatchText}
+                  onChange={(e) => setQuickDispatchText(e.target.value)}
+                  placeholder={`Message #${activeChannel.name}...`}
+                  className="flex-1 bg-transparent text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none"
+                />
+
+                {/* Submit button */}
+                <button
+                  type="submit"
+                  disabled={!quickDispatchText.trim()}
+                  className={`p-1.5 rounded-lg transition-all cursor-pointer ${
+                    quickDispatchText.trim()
+                      ? 'bg-cyan-500 hover:bg-cyan-400 text-black shadow-sm'
+                      : 'text-zinc-600 cursor-not-allowed opacity-50'
+                  }`}
+                >
+                  <Send className="w-4 h-4" />
+                </button>
+              </form>
+            </div>
+          )}
         </main>
 
         {/* ========================================================================= */}
-        {/* COLUMN 3: Active Members List (Collapsible on <1280px)                    */}
+        {/* COLUMN 3: Active Members Sidebar (Discord Style)                          */}
         {/* ========================================================================= */}
         <aside
-          className={`fixed inset-y-0 right-0 z-40 w-[280px] bg-[#070912] border-l border-zinc-800/80 flex flex-col transition-transform duration-300 ease-in-out xl:static xl:translate-x-0 ${
+          className={`fixed inset-y-0 right-0 z-40 w-[240px] bg-[#0b0e14] border-l border-white/[0.06] flex flex-col transition-transform duration-300 ease-in-out xl:static xl:translate-x-0 ${
             isMobileMembersOpen ? 'translate-x-0 shadow-2xl' : 'translate-x-full'
           }`}
         >
           {/* Header */}
-          <div className="h-16 px-5 border-b border-zinc-800/80 flex items-center justify-between shrink-0 bg-black/30">
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-amber-400" />
-              <span className="font-sans text-xs font-bold tracking-wider text-zinc-100">
-                SYNDICATE ROSTER
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-zinc-400 font-medium">
-                {members.length} VERIFIED
-              </span>
-              <button
-                onClick={() => setIsMobileMembersOpen(false)}
-                className="xl:hidden p-1 text-zinc-400 hover:text-zinc-200 cursor-pointer rounded-lg hover:bg-zinc-900"
-                aria-label="Close syndicate roster"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
+          <div className="h-14 px-4 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-[#090b10]">
+            <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">
+              Members — {members.length}
+            </span>
+            <button
+              onClick={() => setIsMobileMembersOpen(false)}
+              className="xl:hidden p-1 text-zinc-400 hover:text-white cursor-pointer rounded hover:bg-zinc-800"
+              aria-label="Close roster"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
 
           {/* Member Groups Scroll */}
-          <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
+          <div className="flex-1 overflow-y-auto px-2.5 py-3 space-y-4">
             
             {/* Group 1: The Board */}
-            <div className="space-y-1.5">
-              <div className="px-2 text-xs font-semibold uppercase tracking-wider text-amber-400/90 flex items-center justify-between">
-                <span>The Board ({boardMembers.length})</span>
-                <span className="text-xs text-amber-400/80 font-medium">
-                  Tier-1
-                </span>
+            <div className="space-y-0.5">
+              <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-cyan-400">
+                The Board — {boardMembers.length}
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-0.5 pt-1">
                 {boardMembers.map((member) => (
                   <div
                     key={member.id}
@@ -1010,28 +756,26 @@ export default function App() {
                       sounds.playClick();
                       setSelectedProfileUser(member);
                     }}
-                    className="group flex items-center gap-3 p-2 rounded-xl hover:bg-zinc-900/70 border border-transparent hover:border-amber-500/30 transition-all cursor-pointer"
+                    className="flex items-center gap-2.5 px-2 py-1.5 rounded-md hover:bg-white/[0.04] transition cursor-pointer group"
                   >
                     <div className="relative shrink-0">
-                      <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${member.avatarBg} border border-amber-400/50 flex items-center justify-center text-xs font-semibold text-zinc-100 shadow-sm group-hover:scale-105 transition-transform`}>
+                      <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${member.avatarBg} border border-cyan-400/50 flex items-center justify-center text-[10px] font-bold text-white`}>
                         {member.initials}
                       </div>
                       {member.status === 'online' && (
-                        <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-zinc-950" />
+                        <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 ring-1 ring-[#0b0e14]" />
                       )}
                       {member.status === 'in-deal-room' && (
-                        <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-amber-400 ring-2 ring-zinc-950" />
+                        <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-cyan-400 ring-1 ring-[#0b0e14]" />
                       )}
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-semibold text-zinc-200 group-hover:text-amber-300 transition-colors truncate">
-                          {member.name}
-                        </span>
+                      <div className="text-xs font-semibold text-zinc-200 group-hover:text-cyan-300 truncate">
+                        {member.name}
                       </div>
-                      <div className="text-xs text-zinc-400 truncate">
-                        {member.status === 'in-deal-room' ? 'In Deal Room' : member.roleTitle}
+                      <div className="text-[10px] text-zinc-400 truncate">
+                        {member.roleTitle}
                       </div>
                     </div>
                   </div>
@@ -1040,12 +784,12 @@ export default function App() {
             </div>
 
             {/* Group 2: Architects */}
-            <div className="space-y-1.5">
-              <div className="px-2 text-xs font-semibold uppercase tracking-wider text-zinc-400 flex items-center justify-between">
-                <span>Architects ({architectMembers.length})</span>
+            <div className="space-y-0.5">
+              <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                Architects — {architectMembers.length}
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-0.5 pt-1">
                 {architectMembers.map((member) => (
                   <div
                     key={member.id}
@@ -1053,22 +797,22 @@ export default function App() {
                       sounds.playClick();
                       setSelectedProfileUser(member);
                     }}
-                    className="group flex items-center gap-3 p-2 rounded-xl hover:bg-zinc-900/50 border border-transparent hover:border-zinc-800 transition-all cursor-pointer"
+                    className="flex items-center gap-2.5 px-2 py-1.5 rounded-md hover:bg-white/[0.04] transition cursor-pointer group"
                   >
                     <div className="relative shrink-0">
-                      <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${member.avatarBg} border border-zinc-700/60 flex items-center justify-center text-xs font-semibold text-zinc-300 group-hover:scale-105 transition-transform`}>
+                      <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${member.avatarBg} border border-zinc-700 flex items-center justify-center text-[10px] font-bold text-zinc-300`}>
                         {member.initials}
                       </div>
                       {member.status === 'online' && (
-                        <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-zinc-950" />
+                        <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 ring-1 ring-[#0b0e14]" />
                       )}
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      <div className="text-xs font-semibold text-zinc-300 group-hover:text-zinc-100 transition-colors truncate">
+                      <div className="text-xs font-medium text-zinc-300 group-hover:text-white truncate">
                         {member.name}
                       </div>
-                      <div className="text-xs text-zinc-400 truncate">
+                      <div className="text-[10px] text-zinc-400 truncate">
                         {member.roleTitle}
                       </div>
                     </div>
@@ -1078,12 +822,12 @@ export default function App() {
             </div>
 
             {/* Group 3: Members */}
-            <div className="space-y-1.5">
-              <div className="px-2 text-xs font-semibold uppercase tracking-wider text-zinc-400 flex items-center justify-between">
-                <span>Members ({regularMembers.length})</span>
+            <div className="space-y-0.5">
+              <div className="px-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                Members — {regularMembers.length}
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-0.5 pt-1">
                 {regularMembers.slice(0, 15).map((member) => (
                   <div
                     key={member.id}
@@ -1091,22 +835,22 @@ export default function App() {
                       sounds.playClick();
                       setSelectedProfileUser(member);
                     }}
-                    className="group flex items-center gap-3 p-2 rounded-xl hover:bg-zinc-900/40 border border-transparent hover:border-zinc-800 transition-all cursor-pointer"
+                    className="flex items-center gap-2.5 px-2 py-1.5 rounded-md hover:bg-white/[0.03] transition cursor-pointer group"
                   >
                     <div className="relative shrink-0">
-                      <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${member.avatarBg} border border-zinc-800 flex items-center justify-center text-xs font-semibold text-zinc-400`}>
+                      <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${member.avatarBg} border border-zinc-800 flex items-center justify-center text-[10px] font-semibold text-zinc-400`}>
                         {member.initials}
                       </div>
                       {member.status === 'online' && (
-                        <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-zinc-950" />
+                        <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 ring-1 ring-[#0b0e14]" />
                       )}
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      <div className="text-xs font-medium text-zinc-400 group-hover:text-zinc-200 transition-colors truncate">
+                      <div className="text-xs text-zinc-400 group-hover:text-zinc-200 truncate">
                         {member.name}
                       </div>
-                      <div className="text-xs text-zinc-400 truncate">
+                      <div className="text-[10px] text-zinc-400 truncate">
                         {member.roleTitle}
                       </div>
                     </div>
@@ -1116,24 +860,16 @@ export default function App() {
             </div>
 
           </div>
-
-          {/* Column 3 Footer: Syndicate Status */}
-          <div className="p-3.5 border-t border-zinc-800/80 bg-black/40 shrink-0 text-xs text-zinc-400 flex items-center justify-between">
-            <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              Syndicate Connected
-            </span>
-            <span className="text-zinc-500 font-mono text-xs">Node #42</span>
-          </div>
         </aside>
 
-        {/* Backdrop overlay for mobile & tablet members drawer */}
+        {/* Backdrop overlay for mobile members drawer */}
         {isMobileMembersOpen && (
           <div
             onClick={() => setIsMobileMembersOpen(false)}
             className="fixed inset-0 z-30 bg-black/75 backdrop-blur-sm xl:hidden animate-in fade-in duration-200"
           />
         )}
+
 
       </div>
 

@@ -54,10 +54,10 @@ export const DealRoomModal: React.FC<DealRoomModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-3xl animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl bg-[#09090c] border border-amber-500/30 rounded-2xl shadow-[0_0_60px_rgba(0,0,0,0.9),0_0_35px_rgba(245,158,11,0.12)] overflow-hidden">
+      <div className="relative w-full max-w-2xl bg-[#09090c] border border-cyan-500/30 rounded-2xl shadow-[0_0_60px_rgba(0,0,0,0.9),0_0_35px_rgba(245,158,11,0.12)] overflow-hidden">
         
         {/* Hairline gold accent */}
-        <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-amber-400/80 to-transparent" />
+        <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-cyan-400/80 to-transparent" />
 
         <button
           onClick={onClose}
@@ -68,8 +68,8 @@ export const DealRoomModal: React.FC<DealRoomModalProps> = ({
 
         <div className="p-6 sm:p-8 space-y-6">
           <div className="space-y-1">
-            <span className="text-xs font-mono uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-              <Lock className="w-3.5 h-3.5 text-amber-400" />
+            <span className="text-xs font-mono uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
+              <Lock className="w-3.5 h-3.5 text-cyan-400" />
               OTC Escrow & Syndicate Desk
             </span>
             <h2 className="font-sans text-xl sm:text-2xl font-bold tracking-tight text-zinc-100">
@@ -95,11 +95,11 @@ export const DealRoomModal: React.FC<DealRoomModalProps> = ({
                   }}
                   className={`p-3 rounded-xl text-left border transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-zinc-900/90 border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.1)]'
+                      ? 'bg-zinc-900/90 border-cyan-500/50 shadow-[0_0_15px_rgba(245,158,11,0.1)]'
                       : 'bg-zinc-950/60 border-zinc-800 hover:border-zinc-700'
                   }`}
                 >
-                  <div className="text-xs font-mono text-amber-400/90 uppercase truncate">
+                  <div className="text-xs font-mono text-cyan-400/90 uppercase truncate">
                     {deal.niche}
                   </div>
                   <div className="text-xs font-semibold text-zinc-200 truncate mt-0.5">
@@ -123,7 +123,7 @@ export const DealRoomModal: React.FC<DealRoomModalProps> = ({
                   <div className="text-xs text-zinc-400 font-mono">Entity: {selectedDeal.targetCompany}</div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono font-bold text-amber-400 px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20">
+                  <span className="text-xs font-mono font-bold text-cyan-400 px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20">
                     {selectedDeal.expectedYield}
                   </span>
                   <span className="text-xs font-mono text-zinc-400">
@@ -142,7 +142,7 @@ export const DealRoomModal: React.FC<DealRoomModalProps> = ({
                 </div>
                 <div className="w-full h-2 rounded-full bg-zinc-900 overflow-hidden border border-zinc-800">
                   <div
-                    className="h-full bg-gradient-to-r from-amber-600 via-amber-500 to-amber-400 rounded-full transition-all duration-500"
+                    className="h-full bg-gradient-to-r from-cyan-600 via-cyan-500 to-cyan-400 rounded-full transition-all duration-500"
                     style={{ width: `${Math.min(100, (selectedDeal.filledAmount / selectedDeal.totalAllocation) * 100)}%` }}
                   />
                 </div>
@@ -164,7 +164,7 @@ export const DealRoomModal: React.FC<DealRoomModalProps> = ({
 
           {/* Commitment Form */}
           {isSuccess ? (
-            <div className="p-6 rounded-xl bg-amber-500/10 border border-amber-500/30 text-center space-y-2 animate-in zoom-in-95 duration-200">
+            <div className="p-6 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-center space-y-2 animate-in zoom-in-95 duration-200">
               <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto" />
               <div className="font-mono text-sm font-bold text-zinc-100">
                 Allocation Committed & Signed On-Chain
@@ -183,14 +183,14 @@ export const DealRoomModal: React.FC<DealRoomModalProps> = ({
                     value={allocationAmount}
                     onChange={(e) => setAllocationAmount(e.target.value)}
                     placeholder="Enter allocation ticket (Min $100,000)"
-                    className="w-full pl-9 pr-3 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-mono font-bold text-amber-400 placeholder:text-zinc-600 focus:outline-none focus:border-amber-500/50"
+                    className="w-full pl-9 pr-3 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-mono font-bold text-cyan-400 placeholder:text-zinc-600 focus:outline-none focus:border-cyan-500/50"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-mono font-bold text-xs rounded-xl shadow-[0_0_20px_rgba(245,158,11,0.25)] flex items-center justify-center gap-2 cursor-pointer transition-all disabled:opacity-50"
+                  className="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-400 hover:to-cyan-500 text-black font-mono font-bold text-xs rounded-xl shadow-[0_0_20px_rgba(245,158,11,0.25)] flex items-center justify-center gap-2 cursor-pointer transition-all disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />

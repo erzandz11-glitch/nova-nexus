@@ -34,7 +34,6 @@ export interface NovaContinuityRecord {
 }
 
 const getSupabaseCredentials = () => {
-  // Check process.env (Next.js & Node)
   if (typeof process !== 'undefined' && process.env) {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
     const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
@@ -42,7 +41,6 @@ const getSupabaseCredentials = () => {
       return { url, key };
     }
   }
-  // Check Vite import.meta
   try {
     // @ts-ignore
     const metaUrl = import.meta.env?.VITE_SUPABASE_URL || import.meta.env?.NEXT_PUBLIC_SUPABASE_URL;
@@ -81,6 +79,25 @@ export class NovaIdentityService {
   }
 
   /**
+   * Universal GitHub OAuth 2.0 PKCE Sign In
+   */
+  static async signInWithGithub(redirectTo?: string): Promise<{ error?: any; url?: string }> {
+    const client = getNovaSupabaseClient();
+    if (!client) {
+      console.warn('[NOVA ID] Supabase credentials unconfigured in environment.');
+      return { error: new Error('Supabase client is not configured') };
+    }
+    const redirect = redirectTo || (typeof window !== 'undefined' ? window.location.origin : '');
+    const { data, error } = await client.auth.signInWithOAuth({
+      provider: 'github',
+      options: {
+        redirectTo: redirect,
+      },
+    });
+    return { error, url: data?.url };
+  }
+
+  /**
    * Universal Google OAuth 2.0 PKCE Sign In
    */
   static async signInWithGoogle(redirectTo?: string): Promise<{ error?: any; url?: string }> {
@@ -94,13 +111,27 @@ export class NovaIdentityService {
       provider: 'google',
       options: {
         redirectTo: redirect,
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
-        },
       },
     });
     return { error, url: data?.url };
+  }
+
+  /**
+   * Magic Link / Email OTP Sign In
+   */
+  static async signInWithEmail(email: string, redirectTo?: string): Promise<{ error?: any }> {
+    const client = getNovaSupabaseClient();
+    if (!client) {
+      return { error: new Error('Supabase client is not configured') };
+    }
+    const redirect = redirectTo || (typeof window !== 'undefined' ? window.location.origin : '');
+    const { error } = await client.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: redirect,
+      },
+    });
+    return { error };
   }
 
   /**

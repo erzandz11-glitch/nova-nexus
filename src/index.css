@@ -3,13 +3,13 @@
 @layer base {
   body {
     font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
-    background-color: #04060c;
-    color: #e4e4e7;
+    background-color: #080a0f;
+    color: #e2e8f0;
     letter-spacing: -0.01em;
   }
 }
 
-/* Modern Geometric Sans-serif enforced - all serifs banned */
+/* Modern Geometric Sans-serif */
 .font-cinzel {
   font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif !important;
   letter-spacing: -0.02em;
@@ -19,20 +19,20 @@
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Custom discreet sovereign luxury scrollbar */
+/* Discord-inspired clean scrollbar */
 ::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e2230;
-  border-radius: 4px;
+  background: #1e2430;
+  border-radius: 6px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #333a4d;
+  background: #2d3748;
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -42,3 +42,4 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+

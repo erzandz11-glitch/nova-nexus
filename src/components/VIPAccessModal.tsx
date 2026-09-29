@@ -67,13 +67,13 @@ export const VIPAccessModal: React.FC<VIPAccessModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-3xl transition-opacity animate-in fade-in duration-300">
       {/* Background ambient gold vignette */}
-      <div className="absolute w-[500px] h-[500px] bg-amber-500/[0.04] rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute w-[500px] h-[500px] bg-cyan-500/[0.04] rounded-full blur-[120px] pointer-events-none" />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-lg bg-[#0a0a0c] border border-amber-500/25 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.9),0_0_30px_rgba(245,158,11,0.08)] overflow-hidden">
+      <div className="relative w-full max-w-lg bg-[#0a0a0c] border border-cyan-500/25 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.9),0_0_30px_rgba(245,158,11,0.08)] overflow-hidden">
         
         {/* Subtle top gold hairline */}
-        <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-amber-400/60 to-transparent" />
+        <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent" />
 
         {/* Close button */}
         <button
@@ -91,14 +91,14 @@ export const VIPAccessModal: React.FC<VIPAccessModalProps> = ({
         <div className="p-8 sm:p-10 space-y-6">
           {/* Header Monogram & Title */}
           <div className="text-center space-y-2">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-b from-zinc-800/80 to-zinc-950 border border-amber-500/30 shadow-[0_0_20px_rgba(251,191,36,0.1)] mb-1">
-              <span className="font-sans text-xl font-extrabold tracking-wider text-amber-400">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-b from-zinc-800/80 to-zinc-950 border border-cyan-500/30 shadow-[0_0_20px_rgba(251,191,36,0.1)] mb-1">
+              <span className="font-sans text-xl font-extrabold tracking-wider text-cyan-400">
                 NV
               </span>
             </div>
             
             <div className="space-y-1">
-              <span className="text-xs font-mono uppercase tracking-wider text-amber-400/80 block">
+              <span className="text-xs font-mono uppercase tracking-wider text-cyan-400/80 block">
                 Private Verification Protocol
               </span>
               <h2 className="font-sans text-2xl font-bold tracking-tight text-zinc-100">
@@ -113,7 +113,7 @@ export const VIPAccessModal: React.FC<VIPAccessModalProps> = ({
           {/* Current Identity Verification Preview */}
           <div className="p-3.5 rounded-xl bg-zinc-950/70 border border-zinc-800/80 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${currentUser.avatarBg} border border-amber-500/30 flex items-center justify-center text-xs font-semibold text-zinc-200`}>
+              <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${currentUser.avatarBg} border border-cyan-500/30 flex items-center justify-center text-xs font-semibold text-zinc-200`}>
                 {currentUser.initials}
               </div>
               <div className="text-left">
@@ -121,7 +121,7 @@ export const VIPAccessModal: React.FC<VIPAccessModalProps> = ({
                 <div className="text-xs font-mono text-zinc-400">Status: {currentUser.passId}</div>
               </div>
             </div>
-            <span className="text-xs font-mono px-2 py-0.5 rounded border border-amber-500/30 bg-amber-500/5 text-amber-400">
+            <span className="text-xs font-mono px-2 py-0.5 rounded border border-cyan-500/30 bg-cyan-500/5 text-cyan-400">
               Pass Active
             </span>
           </div>
@@ -132,14 +132,14 @@ export const VIPAccessModal: React.FC<VIPAccessModalProps> = ({
               {/* Option 1: Connect TrustWallet (Web3 NFT Pass) */}
               <button
                 onClick={handleConnectWallet}
-                className="group relative w-full flex items-center justify-between p-4 rounded-xl bg-zinc-900/60 border border-amber-500/30 hover:border-amber-400/80 hover:bg-zinc-900 transition-all duration-300 shadow-[0_0_15px_rgba(0,0,0,0.5)] hover:shadow-[0_0_25px_rgba(245,158,11,0.12)] text-left cursor-pointer"
+                className="group relative w-full flex items-center justify-between p-4 rounded-xl bg-zinc-900/60 border border-cyan-500/30 hover:border-cyan-400/80 hover:bg-zinc-900 transition-all duration-300 shadow-[0_0_15px_rgba(0,0,0,0.5)] hover:shadow-[0_0_25px_rgba(245,158,11,0.12)] text-left cursor-pointer"
               >
                 <div className="flex items-center gap-3.5">
-                  <div className="p-2.5 rounded-lg bg-zinc-950 border border-zinc-800 text-amber-400 group-hover:text-amber-300 transition-colors">
+                  <div className="p-2.5 rounded-lg bg-zinc-950 border border-zinc-800 text-cyan-400 group-hover:text-cyan-300 transition-colors">
                     <Wallet className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="text-sm font-semibold text-zinc-100 group-hover:text-amber-300 transition-colors">
+                    <div className="text-sm font-semibold text-zinc-100 group-hover:text-cyan-300 transition-colors">
                       Connect TrustWallet
                     </div>
                     <div className="text-xs text-zinc-400 font-normal">
@@ -147,7 +147,7 @@ export const VIPAccessModal: React.FC<VIPAccessModalProps> = ({
                     </div>
                   </div>
                 </div>
-                <ArrowRight className="w-4 h-4 text-zinc-500 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all" />
+                <ArrowRight className="w-4 h-4 text-zinc-500 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-all" />
               </button>
 
               {/* Option 2: Login with Supabase / Concierge Key */}
@@ -184,12 +184,12 @@ export const VIPAccessModal: React.FC<VIPAccessModalProps> = ({
             </div>
           ) : (
             /* Connecting & verifying simulation state */
-            <div className="py-6 px-4 rounded-xl bg-zinc-950/80 border border-amber-500/20 text-center space-y-4">
+            <div className="py-6 px-4 rounded-xl bg-zinc-950/80 border border-cyan-500/20 text-center space-y-4">
               <div className="relative mx-auto w-12 h-12 flex items-center justify-center">
                 {isSuccess ? (
                   <CheckCircle2 className="w-10 h-10 text-emerald-400 animate-in zoom-in-75 duration-300" />
                 ) : (
-                  <div className="w-9 h-9 border-2 border-amber-500/30 border-t-amber-400 rounded-full animate-spin" />
+                  <div className="w-9 h-9 border-2 border-cyan-500/30 border-t-cyan-400 rounded-full animate-spin" />
                 )}
               </div>
               <div className="space-y-1">
@@ -206,7 +206,7 @@ export const VIPAccessModal: React.FC<VIPAccessModalProps> = ({
           {/* Footer Terms & Security Note */}
           <div className="pt-2 border-t border-zinc-900/80 flex items-center justify-between text-xs text-zinc-400 font-mono">
             <span className="flex items-center gap-1.5 text-zinc-400">
-              <Lock className="w-3 h-3 text-amber-500/70" />
+              <Lock className="w-3 h-3 text-cyan-500/70" />
               Zero-Knowledge Verification
             </span>
             <span className="text-zinc-400 hover:text-zinc-300 cursor-pointer flex items-center gap-1 transition-colors">

@@ -181,33 +181,33 @@ export const TheArena: React.FC<TheArenaProps> = ({
     switch (rank) {
       case 1:
         return {
-          badge: 'text-amber-300 font-bold border border-amber-400/80 bg-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.35)] ring-1 ring-amber-400/40',
-          border: 'border-amber-400/70 bg-amber-500/10 shadow-[0_0_30px_rgba(245,158,11,0.25)]',
+          badge: 'text-cyan-300 font-bold border border-cyan-500/30 bg-cyan-500/10',
+          border: 'border-cyan-500/30 bg-cyan-500/[0.04]',
           label: 'I · SOVEREIGN',
         };
       case 2:
         return {
-          badge: 'text-zinc-100 font-bold border border-zinc-300/80 bg-zinc-400/20 shadow-[0_0_15px_rgba(228,228,231,0.25)] ring-1 ring-zinc-300/40',
-          border: 'border-zinc-300/60 bg-zinc-400/10 shadow-[0_0_25px_rgba(228,228,231,0.18)]',
+          badge: 'text-zinc-200 font-bold border border-white/20 bg-white/5',
+          border: 'border-white/10 bg-white/[0.02]',
           label: 'II · PLATINUM',
         };
       case 3:
         return {
-          badge: 'text-amber-400 font-bold border border-amber-700/80 bg-amber-800/20 shadow-[0_0_15px_rgba(217,119,6,0.25)] ring-1 ring-amber-700/40',
-          border: 'border-amber-700/60 bg-amber-800/10 shadow-[0_0_25px_rgba(217,119,6,0.18)]',
-          label: 'III · BRONZE',
+          badge: 'text-slate-300 font-bold border border-slate-600/30 bg-slate-700/10',
+          border: 'border-slate-700/20 bg-slate-700/[0.02]',
+          label: 'III · TITANIUM',
         };
       default:
         return {
-          badge: 'text-zinc-500 font-medium border border-zinc-800 bg-zinc-950',
-          border: 'border-zinc-800 bg-zinc-950',
+          badge: 'text-zinc-500 font-medium border border-white/[0.06] bg-black/40',
+          border: 'border-white/[0.04] bg-[#0c1017]',
           label: `#${rank}`,
         };
     }
   };
 
   return (
-    <div className="min-h-full pb-24 space-y-6 animate-in fade-in duration-300">
+    <div className="min-h-full pb-20 space-y-5 animate-in fade-in duration-200">
       
       {/* Return to Feed Action Bar */}
       {onBackToFeed && (
@@ -217,57 +217,51 @@ export const TheArena: React.FC<TheArenaProps> = ({
               sounds.playClick();
               onBackToFeed();
             }}
-            className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-900/90 hover:bg-zinc-850 border border-zinc-700/80 hover:border-amber-500/50 text-xs font-mono text-zinc-300 hover:text-amber-300 transition-all cursor-pointer shadow-md"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-xs text-zinc-300 hover:text-white transition-all cursor-pointer"
           >
-            <ArrowLeft className="w-3.5 h-3.5 text-amber-400 group-hover:-translate-x-0.5 transition-transform" />
-            <span>← Return to Syndicate Channel Feed</span>
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Back to Feed</span>
           </button>
 
-          <span className="hidden sm:inline-flex items-center gap-1.5 text-xs text-zinc-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            Live Arena Consensus Protocol
+          <span className="hidden sm:inline-flex items-center gap-1.5 text-xs text-zinc-500">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            Live Consensus Protocol
           </span>
         </div>
       )}
 
-      {/* Top Banner / Bloomberg Terminal Header */}
-      <div className="relative rounded-2xl border border-zinc-800/80 bg-gradient-to-b from-zinc-900/60 to-zinc-950/90 p-6 sm:p-8 overflow-hidden shadow-2xl">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/[0.04] rounded-full blur-[90px] pointer-events-none" />
-
-        <div className="relative flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-xs font-mono text-amber-400 tracking-widest uppercase">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-              Sovereign Ledger · Q3 Arena Sprint
+      {/* Arena Overview Card */}
+      <div className="rounded-xl border border-white/[0.06] bg-[#0c1017] p-5 sm:p-6 shadow-sm">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-[11px] font-mono text-cyan-400 uppercase">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+              Sovereign Ledger · Arena Sprint
             </div>
-            <h1 className="font-sans text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-100">
-              THE LEADERBOARD ARENA
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+              The Leaderboard Arena
             </h1>
-            <p className="text-xs sm:text-sm text-zinc-400 max-w-xl leading-relaxed">
-              Real-time audited revenue volume from the top creators and syndicate operators globally. Scalable high-frequency escrow consensus.
+            <p className="text-xs text-zinc-400 max-w-xl">
+              Real-time audited revenue volume from the top creators and syndicate operators.
             </p>
           </div>
 
-          {/* Quick Actions & Aggregate Stats */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
-            <div className="grid grid-cols-2 gap-3 font-mono text-left">
-              <div className="p-3 rounded-xl border border-zinc-800/80 bg-black/40">
-                <span className="text-xs text-zinc-400 uppercase tracking-wider block">Sprint Volume</span>
-                <span className="text-base font-bold text-amber-400 tabular-nums">$9,842,000</span>
-              </div>
-              <div className="p-3 rounded-xl border border-zinc-800/80 bg-black/40">
-                <span className="text-xs text-zinc-400 uppercase tracking-wider block">Total Audited</span>
-                <span className="text-base font-bold text-zinc-200 tabular-nums">{entries.length} Creators</span>
-              </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="p-2.5 rounded-lg bg-black/40 border border-white/[0.04] text-left">
+              <span className="text-[10px] text-zinc-500 uppercase block">Sprint Volume</span>
+              <span className="text-sm font-bold font-mono text-cyan-400">$9,842,000</span>
             </div>
-
+            <div className="p-2.5 rounded-lg bg-black/40 border border-white/[0.04] text-left">
+              <span className="text-[10px] text-zinc-500 uppercase block">Audited</span>
+              <span className="text-sm font-bold font-mono text-zinc-200">{entries.length} Creators</span>
+            </div>
             <button
               onClick={handleExportCSV}
-              className="px-3.5 py-3 rounded-xl border border-zinc-800 hover:border-amber-500/40 bg-zinc-900/60 hover:bg-zinc-900 text-zinc-300 hover:text-amber-300 text-xs font-mono flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
-              title="Download verified cryptographic CSV ledger"
+              className="p-2.5 rounded-lg border border-white/[0.06] bg-black/40 hover:bg-white/[0.04] text-zinc-300 hover:text-white text-xs font-medium flex items-center gap-1.5 transition cursor-pointer"
+              title="Download CSV ledger"
             >
-              <Download className="w-4 h-4 text-amber-400" />
-              <span>Export CSV</span>
+              <Download className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="hidden sm:inline">Export</span>
             </button>
           </div>
         </div>
@@ -301,7 +295,7 @@ export const TheArena: React.FC<TheArenaProps> = ({
                 <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${topThree[1].user.avatarBg} border-2 border-zinc-400/60 flex items-center justify-center font-mono text-base font-bold text-zinc-100 shadow-[0_0_20px_rgba(228,228,231,0.15)] group-hover:scale-105 transition-transform`}>
                   {topThree[1].user.initials}
                 </div>
-                <div className="mt-3 font-semibold text-sm text-zinc-100 group-hover:text-amber-300 transition-colors">
+                <div className="mt-3 font-semibold text-sm text-zinc-100 group-hover:text-cyan-300 transition-colors">
                   {topThree[1].user.name}
                 </div>
                 <div className="text-xs text-zinc-400 font-mono">{topThree[1].user.handle}</div>
@@ -320,32 +314,32 @@ export const TheArena: React.FC<TheArenaProps> = ({
             </div>
           )}
 
-          {/* Rank 1 (Gold / Middle - Elevated) */}
+          {/* Rank 1 (Cyan Sovereign / Middle - Elevated) */}
           {topThree[0] && (
             <div
               onClick={() => {
                 sounds.playClick();
                 onSelectUser(topThree[0].user);
               }}
-              className="group cursor-pointer order-1 md:order-2 relative rounded-2xl border border-amber-500/50 bg-gradient-to-b from-amber-950/20 via-zinc-950 to-black p-6 text-center transition-all duration-300 hover:border-amber-400 hover:-translate-y-1.5 shadow-[0_15px_40px_rgba(245,158,11,0.18)]"
+              className="group cursor-pointer order-1 md:order-2 relative rounded-2xl border border-cyan-500/50 bg-gradient-to-b from-cyan-950/20 via-zinc-950 to-black p-6 text-center transition-all duration-300 hover:border-cyan-400 hover:-translate-y-1.5 shadow-[0_15px_40px_rgba(6,182,212,0.18)]"
             >
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full border border-amber-500/70 bg-gradient-to-r from-amber-600/30 via-zinc-900 to-amber-600/30 font-mono text-xs font-bold text-amber-300 shadow-[0_0_25px_rgba(245,158,11,0.3)] flex items-center gap-1.5">
-                <Trophy className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full border border-cyan-500/70 bg-gradient-to-r from-cyan-600/30 via-zinc-900 to-cyan-600/30 font-mono text-xs font-bold text-cyan-300 shadow-[0_0_25px_rgba(6,182,212,0.3)] flex items-center gap-1.5">
+                <Trophy className="w-3.5 h-3.5 text-cyan-400 fill-cyan-400" />
                 RANK I · SOVEREIGN
               </div>
 
               <div className="mt-2 flex flex-col items-center">
-                <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${topThree[0].user.avatarBg} border-2 border-amber-400 flex items-center justify-center font-mono text-xl font-bold text-amber-300 shadow-[0_0_30px_rgba(245,158,11,0.35)] group-hover:scale-105 transition-transform`}>
+                <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${topThree[0].user.avatarBg} border-2 border-cyan-400 flex items-center justify-center font-mono text-xl font-bold text-cyan-300 shadow-[0_0_30px_rgba(6,182,212,0.35)] group-hover:scale-105 transition-transform`}>
                   {topThree[0].user.initials}
                 </div>
-                <div className="mt-3.5 font-semibold text-base text-zinc-100 group-hover:text-amber-300 transition-colors">
+                <div className="mt-3.5 font-semibold text-base text-zinc-100 group-hover:text-cyan-300 transition-colors">
                   {topThree[0].user.name}
                 </div>
                 <div className="text-xs text-zinc-400 font-mono">{topThree[0].user.handle}</div>
                 
-                <div className="mt-5 pt-3.5 border-t border-amber-500/20 w-full space-y-1">
+                <div className="mt-5 pt-3.5 border-t border-cyan-500/20 w-full space-y-1">
                   <div className="text-xs text-zinc-400 font-mono">Weekly Audited Revenue</div>
-                  <div className="text-2xl font-mono font-extrabold text-amber-400 tabular-nums">
+                  <div className="text-2xl font-mono font-extrabold text-cyan-400 tabular-nums">
                     {formatCurrency(topThree[0].weeklyRevenue)}
                   </div>
                   <div className="flex items-center justify-center gap-1 text-xs font-mono text-emerald-400">
@@ -357,31 +351,31 @@ export const TheArena: React.FC<TheArenaProps> = ({
             </div>
           )}
 
-          {/* Rank 3 (Bronze / Right) */}
+          {/* Rank 3 (Titanium / Right) */}
           {topThree[2] && (
             <div
               onClick={() => {
                 sounds.playClick();
                 onSelectUser(topThree[2].user);
               }}
-              className="group cursor-pointer order-3 relative rounded-2xl border border-amber-800/40 bg-gradient-to-b from-zinc-900/90 via-zinc-950 to-black p-5 text-center transition-all duration-300 hover:border-amber-700 hover:-translate-y-1 shadow-[0_10px_30px_rgba(0,0,0,0.6)]"
+              className="group cursor-pointer order-3 relative rounded-2xl border border-slate-700/50 bg-gradient-to-b from-zinc-900/90 via-zinc-950 to-black p-5 text-center transition-all duration-300 hover:border-slate-500 hover:-translate-y-1 shadow-[0_10px_30px_rgba(0,0,0,0.6)]"
             >
-              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3.5 py-0.5 rounded-full border border-amber-700/50 bg-zinc-900 font-mono text-xs font-semibold text-amber-500 shadow">
-                RANK III · BRONZE
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3.5 py-0.5 rounded-full border border-slate-600/50 bg-zinc-900 font-mono text-xs font-semibold text-slate-300 shadow">
+                RANK III · TITANIUM
               </div>
 
               <div className="mt-2 flex flex-col items-center">
-                <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${topThree[2].user.avatarBg} border-2 border-amber-700/60 flex items-center justify-center font-mono text-base font-bold text-amber-500 shadow-[0_0_20px_rgba(180,83,9,0.15)] group-hover:scale-105 transition-transform`}>
+                <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${topThree[2].user.avatarBg} border-2 border-slate-600/60 flex items-center justify-center font-mono text-base font-bold text-slate-300 shadow-[0_0_20px_rgba(100,116,139,0.15)] group-hover:scale-105 transition-transform`}>
                   {topThree[2].user.initials}
                 </div>
-                <div className="mt-3 font-semibold text-sm text-zinc-100 group-hover:text-amber-300 transition-colors">
+                <div className="mt-3 font-semibold text-sm text-zinc-100 group-hover:text-cyan-300 transition-colors">
                   {topThree[2].user.name}
                 </div>
                 <div className="text-xs text-zinc-400 font-mono">{topThree[2].user.handle}</div>
                 
                 <div className="mt-4 pt-3 border-t border-zinc-900 w-full space-y-1">
                   <div className="text-xs text-zinc-400 font-mono">Weekly Audited Revenue</div>
-                  <div className="text-xl font-mono font-bold text-amber-500/90 tabular-nums">
+                  <div className="text-xl font-mono font-bold text-slate-200 tabular-nums">
                     {formatCurrency(topThree[2].weeklyRevenue)}
                   </div>
                   <div className="flex items-center justify-center gap-1 text-xs font-mono text-emerald-400">
@@ -409,7 +403,7 @@ export const TheArena: React.FC<TheArenaProps> = ({
               }}
               className={`px-3 py-1.5 rounded-md text-xs font-mono font-medium transition-all cursor-pointer ${
                 timeframe === 'weekly'
-                  ? 'bg-zinc-800 text-amber-300 shadow-sm border border-zinc-700'
+                  ? 'bg-zinc-800 text-cyan-300 shadow-sm border border-zinc-700'
                   : 'text-zinc-400 hover:text-zinc-200'
               }`}
             >
@@ -422,7 +416,7 @@ export const TheArena: React.FC<TheArenaProps> = ({
               }}
               className={`px-3 py-1.5 rounded-md text-xs font-mono font-medium transition-all cursor-pointer ${
                 timeframe === 'monthly'
-                  ? 'bg-zinc-800 text-amber-300 shadow-sm border border-zinc-700'
+                  ? 'bg-zinc-800 text-cyan-300 shadow-sm border border-zinc-700'
                   : 'text-zinc-400 hover:text-zinc-200'
               }`}
             >
@@ -435,7 +429,7 @@ export const TheArena: React.FC<TheArenaProps> = ({
               }}
               className={`px-3 py-1.5 rounded-md text-xs font-mono font-medium transition-all cursor-pointer ${
                 timeframe === 'season'
-                  ? 'bg-zinc-800 text-amber-300 shadow-sm border border-zinc-700'
+                  ? 'bg-zinc-800 text-cyan-300 shadow-sm border border-zinc-700'
                   : 'text-zinc-400 hover:text-zinc-200'
               }`}
             >
@@ -455,7 +449,7 @@ export const TheArena: React.FC<TheArenaProps> = ({
                   setCurrentPage(1);
                 }}
                 placeholder="Search creator / wallet..."
-                className="w-full pl-8 pr-3 py-1.5 bg-zinc-900/60 border border-zinc-800 rounded-lg text-xs font-mono text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-amber-500/40"
+                className="w-full pl-8 pr-3 py-1.5 bg-zinc-900/60 border border-zinc-800 rounded-lg text-xs font-mono text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-cyan-500/40"
               />
             </div>
 
@@ -468,11 +462,11 @@ export const TheArena: React.FC<TheArenaProps> = ({
                 value={jumpRankInput}
                 onChange={(e) => setJumpRankInput(e.target.value)}
                 placeholder="Rank #"
-                className="w-18 px-2.5 py-1.5 bg-zinc-900/60 border border-zinc-800 rounded-lg text-xs font-mono text-amber-400 text-center focus:outline-none focus:border-amber-500/40"
+                className="w-18 px-2.5 py-1.5 bg-zinc-900/60 border border-zinc-800 rounded-lg text-xs font-mono text-cyan-400 text-center focus:outline-none focus:border-cyan-500/40"
               />
               <button
                 type="submit"
-                className="px-2.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/60 text-zinc-300 hover:text-amber-300 rounded-lg text-xs font-mono cursor-pointer"
+                className="px-2.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/60 text-zinc-300 hover:text-cyan-300 rounded-lg text-xs font-mono cursor-pointer"
               >
                 Go
               </button>
@@ -482,7 +476,7 @@ export const TheArena: React.FC<TheArenaProps> = ({
             {currentUserEntry && (
               <button
                 onClick={handleJumpToMyRank}
-                className="px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 text-amber-300 rounded-lg text-xs font-mono flex items-center gap-1.5 cursor-pointer"
+                className="px-3 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 rounded-lg text-xs font-mono flex items-center gap-1.5 cursor-pointer"
                 title="Locate my standing"
               >
                 <LocateFixed className="w-3.5 h-3.5" />
@@ -505,7 +499,7 @@ export const TheArena: React.FC<TheArenaProps> = ({
                 }}
                 className={`px-2.5 py-1 rounded text-xs font-mono whitespace-nowrap transition-colors cursor-pointer ${
                   selectedNiche === niche
-                    ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
+                    ? 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/30'
                     : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900'
                 }`}
               >
@@ -525,7 +519,7 @@ export const TheArena: React.FC<TheArenaProps> = ({
                   setCurrentPage(1);
                 }}
                 className={`px-2 py-0.5 rounded cursor-pointer ${
-                  pageSize === size ? 'bg-zinc-800 text-amber-400 font-bold' : 'hover:text-zinc-300'
+                  pageSize === size ? 'bg-zinc-800 text-cyan-400 font-bold' : 'hover:text-zinc-300'
                 }`}
               >
                 {size}
@@ -543,7 +537,7 @@ export const TheArena: React.FC<TheArenaProps> = ({
               <tr className="border-b border-zinc-800 bg-zinc-900/50 text-xs font-mono text-zinc-400 uppercase tracking-wider">
                 <th
                   onClick={() => handleSort('rank')}
-                  className="py-3.5 px-4 w-20 text-center cursor-pointer hover:text-amber-400 select-none"
+                  className="py-3.5 px-4 w-20 text-center cursor-pointer hover:text-cyan-400 select-none"
                 >
                   <div className="flex items-center justify-center gap-1">
                     <span>Rank</span>
@@ -553,7 +547,7 @@ export const TheArena: React.FC<TheArenaProps> = ({
                 <th className="py-3.5 px-4">Creator / Principal</th>
                 <th
                   onClick={() => handleSort('revenue')}
-                  className="py-3.5 px-4 text-right cursor-pointer hover:text-amber-400 select-none"
+                  className="py-3.5 px-4 text-right cursor-pointer hover:text-cyan-400 select-none"
                 >
                   <div className="flex items-center justify-end gap-1">
                     <span>Weekly Revenue</span>
@@ -564,7 +558,7 @@ export const TheArena: React.FC<TheArenaProps> = ({
                 <th className="py-3.5 px-4 hidden md:table-cell">Member Tier</th>
                 <th
                   onClick={() => handleSort('growth')}
-                  className="py-3.5 px-4 text-right cursor-pointer hover:text-amber-400 select-none"
+                  className="py-3.5 px-4 text-right cursor-pointer hover:text-cyan-400 select-none"
                 >
                   <div className="flex items-center justify-end gap-1">
                     <span>Growth Delta</span>
@@ -573,7 +567,7 @@ export const TheArena: React.FC<TheArenaProps> = ({
                 </th>
                 <th
                   onClick={() => handleSort('deals')}
-                  className="py-3.5 px-4 text-right hidden lg:table-cell cursor-pointer hover:text-amber-400 select-none"
+                  className="py-3.5 px-4 text-right hidden lg:table-cell cursor-pointer hover:text-cyan-400 select-none"
                 >
                   <div className="flex items-center justify-end gap-1">
                     <span>Deals Closed</span>
@@ -599,7 +593,7 @@ export const TheArena: React.FC<TheArenaProps> = ({
                     }}
                     className={`group cursor-pointer transition-colors duration-150 ${
                       isCurrentUser
-                        ? 'bg-amber-500/[0.06] hover:bg-amber-500/[0.1]'
+                        ? 'bg-cyan-500/[0.06] hover:bg-cyan-500/[0.1]'
                         : 'hover:bg-zinc-900/60'
                     }`}
                   >
@@ -616,11 +610,9 @@ export const TheArena: React.FC<TheArenaProps> = ({
                         <div
                           className={`w-9 h-9 rounded-lg bg-gradient-to-br ${entry.user.avatarBg} border ${
                             entry.rank === 1
-                              ? 'border-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.3)]'
+                              ? 'border-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.3)]'
                               : entry.rank === 2
                               ? 'border-zinc-300 shadow-[0_0_10px_rgba(228,228,231,0.2)]'
-                              : entry.rank === 3
-                              ? 'border-amber-600 shadow-[0_0_10px_rgba(217,119,6,0.2)]'
                               : 'border-zinc-800'
                           } flex items-center justify-center font-mono text-xs font-semibold text-zinc-200 shrink-0`}
                         >
@@ -628,11 +620,11 @@ export const TheArena: React.FC<TheArenaProps> = ({
                         </div>
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5">
-                            <span className="font-semibold text-zinc-100 group-hover:text-amber-300 transition-colors truncate">
+                            <span className="font-semibold text-zinc-100 group-hover:text-cyan-300 transition-colors truncate">
                               {entry.user.name}
                             </span>
                             {isCurrentUser && (
-                              <span className="text-xs text-amber-400 border border-amber-500/30 px-1.5 py-0.5 rounded font-sans">
+                              <span className="text-xs text-cyan-400 border border-cyan-500/30 px-1.5 py-0.5 rounded font-sans">
                                 You
                               </span>
                             )}
@@ -646,7 +638,7 @@ export const TheArena: React.FC<TheArenaProps> = ({
 
                     {/* Weekly Revenue */}
                     <td className="py-4 px-4 text-right">
-                      <div className="font-bold text-zinc-100 tabular-nums text-sm group-hover:text-amber-300 transition-colors">
+                      <div className="font-bold text-zinc-100 tabular-nums text-sm group-hover:text-cyan-300 transition-colors">
                         {formatCurrency(entry.weeklyRevenue)}
                       </div>
                       <div className="text-xs text-zinc-400 tabular-nums">
@@ -656,7 +648,7 @@ export const TheArena: React.FC<TheArenaProps> = ({
 
                     {/* AI Token Generation Metric */}
                     <td className="py-4 px-4 text-right font-mono">
-                      <div className="text-amber-300 font-semibold tabular-nums text-xs">
+                      <div className="text-cyan-300 font-semibold tabular-nums text-xs">
                         {entry.aiTokensMetric || '48.2M Tokens/mo'}
                       </div>
                       <div className="text-xs text-zinc-500">Autonomous Nodes</div>
@@ -666,7 +658,7 @@ export const TheArena: React.FC<TheArenaProps> = ({
                     <td className="py-4 px-4 hidden md:table-cell">
                       <span className={`inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded border ${
                         entry.user.tier === 'Sovereign Black Card'
-                          ? 'border-amber-500/40 bg-amber-500/10 text-amber-300'
+                          ? 'border-cyan-500/40 bg-cyan-500/10 text-cyan-300'
                           : entry.user.tier === 'Platinum Architect'
                           ? 'border-zinc-400/40 bg-zinc-400/10 text-zinc-200'
                           : 'border-zinc-800 bg-zinc-900 text-zinc-400'
@@ -699,7 +691,7 @@ export const TheArena: React.FC<TheArenaProps> = ({
                     {/* Verification Status */}
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-1.5 text-xs">
-                        <ShieldCheck className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                        <ShieldCheck className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
                         <span className="text-zinc-300 font-normal">
                           {entry.auditBadge}
                         </span>
@@ -717,7 +709,7 @@ export const TheArena: React.FC<TheArenaProps> = ({
                           sounds.playClick();
                           onSelectUser(entry.user);
                         }}
-                        className="p-1.5 rounded-lg text-zinc-500 hover:text-amber-400 hover:bg-zinc-800 transition-colors cursor-pointer"
+                        className="p-1.5 rounded-lg text-zinc-500 hover:text-cyan-400 hover:bg-zinc-800 transition-colors cursor-pointer"
                         title="View Audited Escrow Profile"
                       >
                         <ArrowUpRight className="w-4 h-4" />
@@ -773,11 +765,11 @@ export const TheArena: React.FC<TheArenaProps> = ({
         </div>
       </div>
 
-      {/* STICKY BOTTOM USER STANDING BAR (Quick telemetry for current user) */}
+      {/* STICKY BOTTOM USER STANDING BAR */}
       {currentUserEntry && (
-        <div className="fixed bottom-3 inset-x-4 md:inset-x-auto md:left-72 md:right-8 z-20 p-3 sm:p-4 rounded-2xl bg-zinc-950/90 border border-amber-500/30 backdrop-blur-xl shadow-[0_10px_35px_rgba(0,0,0,0.8),0_0_20px_rgba(245,158,11,0.1)] flex flex-wrap items-center justify-between gap-3 animate-in slide-in-from-bottom-3 duration-300">
+        <div className="fixed bottom-3 inset-x-4 md:inset-x-auto md:left-72 md:right-8 z-20 p-3 sm:p-4 rounded-2xl bg-zinc-950/90 border border-cyan-500/30 backdrop-blur-xl shadow-[0_10px_35px_rgba(0,0,0,0.8),0_0_20px_rgba(6,182,212,0.1)] flex flex-wrap items-center justify-between gap-3 animate-in slide-in-from-bottom-3 duration-300">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+            <div className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
               <Zap className="w-4 h-4" />
             </div>
             <div>
@@ -786,7 +778,7 @@ export const TheArena: React.FC<TheArenaProps> = ({
                 <span className="text-xs font-mono text-emerald-400">+{currentUserEntry.growthDelta}% This Sprint</span>
               </div>
               <div className="text-xs font-mono text-zinc-400">
-                Weekly Revenue: <span className="text-amber-400 font-bold">{formatCurrency(currentUserEntry.weeklyRevenue)}</span> · Next Rank Target: +$91,500
+                Weekly Revenue: <span className="text-cyan-400 font-bold">{formatCurrency(currentUserEntry.weeklyRevenue)}</span> · Next Rank Target: +$91,500
               </div>
             </div>
           </div>
@@ -798,7 +790,7 @@ export const TheArena: React.FC<TheArenaProps> = ({
                   sounds.playClick();
                   onOpenDealRoom();
                 }}
-                className="px-3.5 py-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-mono font-bold text-xs rounded-xl shadow-[0_0_15px_rgba(245,158,11,0.2)] transition-all cursor-pointer whitespace-nowrap"
+                className="px-3.5 py-1.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-mono font-bold text-xs rounded-xl shadow-[0_0_15px_rgba(6,182,212,0.2)] transition-all cursor-pointer whitespace-nowrap"
               >
                 Access OTC Tranches
               </button>

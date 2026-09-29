@@ -25,7 +25,6 @@ export const FeedMessage = memo<FeedMessageProps>(({
   onOpenProfile,
   onBoost,
 }) => {
-  // Reaction states
   const [boosted, setBoosted] = useState<boolean>(!!message.hasBoosted);
   const [boostCount, setBoostCount] = useState<number>(message.boosts || 0);
 
@@ -72,255 +71,244 @@ export const FeedMessage = memo<FeedMessageProps>(({
   };
 
   const isAuthorBoard = message.author.rank === 'The Board';
-  const tierFormatted = isAuthorBoard 
-    ? 'Tier 1 · Board' 
-    : message.author.rank === 'Architects' 
-    ? 'Tier 2 · Architect' 
-    : 'Tier 3 · Member';
-
-  const displayTime = message.timestamp.includes('UTC') 
-    ? message.timestamp 
-    : `${message.timestamp} • ${tierFormatted}`;
+  const isArchitect = message.author.rank === 'Architects';
 
   return (
     <article 
-      className={`group relative rounded-2xl p-5 sm:p-6 transition-all duration-200 shadow-sm ${
+      className={`group relative rounded-xl px-4 py-3.5 sm:px-5 sm:py-4 transition-all duration-150 ${
         message.isPinned
-          ? 'border border-amber-500/30 bg-gradient-to-b from-[#0c0e18] to-[#070912]'
-          : 'border border-zinc-800/80 bg-[#070912] hover:border-zinc-700/80 hover:bg-[#090c17]'
+          ? 'bg-[#111622]/90 border border-cyan-500/20 shadow-sm'
+          : 'bg-[#0d111a]/80 hover:bg-[#111622] border border-white/[0.04] hover:border-white/[0.08]'
       }`}
     >
-      {/* Pinned Dispatch Header */}
+      {/* Pinned Indicator Header */}
       {message.isPinned && (
-        <div className="flex items-center justify-between text-xs text-amber-400 mb-3.5 pb-2.5 border-b border-amber-500/20">
-          <div className="flex items-center gap-2 font-medium tracking-wide">
-            <Pin className="w-3.5 h-3.5 rotate-45 text-amber-400 fill-amber-400/30" />
-            <span>Pinned Dispatch · Board Mandate</span>
+        <div className="flex items-center justify-between text-xs text-cyan-400/90 mb-2.5 pb-2 border-b border-cyan-500/10">
+          <div className="flex items-center gap-1.5 font-medium tracking-wide">
+            <Pin className="w-3.5 h-3.5 rotate-45 text-cyan-400 fill-cyan-400/20" />
+            <span>Pinned Announcement</span>
           </div>
-          <span className="text-xs uppercase font-medium px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-300">
-            Priority
+          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-cyan-400/10 text-cyan-300">
+            Mandate
           </span>
         </div>
       )}
 
-      {/* Author Header Row */}
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-start gap-3.5 min-w-0">
-          {/* Avatar */}
-          <button
-            onClick={() => {
-              sounds.playClick();
-              onOpenProfile && onOpenProfile(message.author);
-            }}
-            className="relative shrink-0 group/avatar text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-amber-400 rounded-xl"
+      {/* Main Message Block: Avatar Left, Message Content Right (Discord Flow) */}
+      <div className="flex items-start gap-3.5">
+        {/* Avatar */}
+        <button
+          onClick={() => {
+            sounds.playClick();
+            onOpenProfile && onOpenProfile(message.author);
+          }}
+          className="relative shrink-0 text-left focus:outline-none rounded-full group/avatar mt-0.5"
+        >
+          <div
+            className={`w-10 h-10 rounded-full bg-gradient-to-br ${message.author.avatarBg} border ${
+              isAuthorBoard 
+                ? 'border-cyan-400/60 shadow-sm' 
+                : isArchitect 
+                ? 'border-zinc-500/60'
+                : 'border-zinc-700/50'
+            } flex items-center justify-center text-xs font-bold text-zinc-100 transition-transform group-hover/avatar:scale-105`}
           >
-            <div
-              className={`w-11 h-11 rounded-xl bg-gradient-to-br ${message.author.avatarBg} border ${
-                isAuthorBoard 
-                  ? 'border-amber-400/80 shadow-sm' 
-                  : 'border-zinc-700/80'
-              } flex items-center justify-center text-xs font-bold text-zinc-100 transition-transform group-hover/avatar:scale-105`}
-            >
-              {message.author.initials}
-            </div>
-            {message.author.status === 'online' && (
-              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-zinc-950" />
-            )}
-            {message.author.status === 'in-deal-room' && (
-              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-amber-400 ring-2 ring-zinc-950" />
-            )}
-          </button>
+            {message.author.initials}
+          </div>
+          {message.author.status === 'online' && (
+            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-[#0d111a]" />
+          )}
+          {message.author.status === 'in-deal-room' && (
+            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-cyan-400 ring-2 ring-[#0d111a]" />
+          )}
+        </button>
 
-          {/* User Details & Metadata */}
-          <div className="space-y-0.5 min-w-0">
-            <div className="flex items-center flex-wrap gap-x-2 gap-y-0.5">
+        {/* Message Body */}
+        <div className="flex-1 min-w-0">
+          {/* Header Row */}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={() => {
                   sounds.playClick();
                   onOpenProfile && onOpenProfile(message.author);
                 }}
-                className="text-sm font-bold text-zinc-100 hover:text-amber-300 font-sans tracking-tight transition-colors cursor-pointer truncate"
+                className="text-sm font-semibold text-zinc-100 hover:text-cyan-300 transition-colors cursor-pointer"
               >
                 {message.author.name}
               </button>
-              
+
+              {/* Badges */}
               {isAuthorBoard ? (
-                <span className="text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded tracking-wide shrink-0">
-                  Board
+                <span className="text-[10px] font-semibold text-cyan-300 bg-cyan-500/10 border border-cyan-500/20 px-1.5 py-0.5 rounded">
+                  The Board
                 </span>
-              ) : (
-                <span className="text-xs font-medium text-zinc-400 bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded shrink-0">
-                  {message.author.rank}
+              ) : isArchitect ? (
+                <span className="text-[10px] font-medium text-zinc-300 bg-zinc-800/80 border border-zinc-700/50 px-1.5 py-0.5 rounded">
+                  Architect
                 </span>
-              )}
+              ) : null}
 
-              <span className="text-zinc-600 text-xs select-none">·</span>
-
-              <span className="text-xs text-zinc-400 tracking-tight shrink-0">
-                {displayTime}
+              <span className="text-zinc-500 text-xs">·</span>
+              <span className="text-xs text-zinc-500 font-normal">
+                {message.timestamp}
               </span>
             </div>
 
-            <div className="text-xs text-zinc-400 font-normal truncate">
-              {message.author.roleTitle}
+            {/* Pass ID Tag */}
+            <div className="hidden sm:inline-flex items-center gap-1 text-[11px] text-zinc-400 bg-zinc-900/60 border border-zinc-800/80 px-2 py-0.5 rounded-md shrink-0">
+              <ShieldCheck className="w-3 h-3 text-cyan-400/80" />
+              <span>{message.author.passId}</span>
             </div>
           </div>
-        </div>
 
-        {/* Pass ID Tag */}
-        <div className="hidden sm:inline-flex items-center gap-1.5 text-xs text-zinc-400 border border-zinc-800 bg-zinc-900/60 px-2.5 py-1 rounded-lg shrink-0">
-          <ShieldCheck className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-          <span className="font-medium text-zinc-300">{message.author.passId}</span>
-        </div>
-      </div>
-
-      {/* Main Content Body */}
-      <div className="mt-3.5 text-sm sm:text-base text-zinc-200 leading-relaxed font-sans space-y-2">
-        {message.title && (
-          <h4 className="text-base sm:text-lg font-bold text-amber-300/95 tracking-tight">
-            {message.title}
-          </h4>
-        )}
-        <p className="whitespace-pre-line text-zinc-300 font-normal">{message.content}</p>
-      </div>
-
-      {/* Attachment Preview (if present) */}
-      {message.attachment && (
-        <div className="mt-4 rounded-xl bg-zinc-950/80 border border-amber-500/20 p-4 transition-colors hover:border-amber-500/40">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-amber-400" />
-              <span className="text-sm font-semibold text-zinc-100 font-sans">
-                {message.attachment.title}
-              </span>
-            </div>
-            {message.attachment.tag && (
-              <span className="text-xs text-amber-300 font-medium px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30">
-                {message.attachment.tag}
-              </span>
-            )}
-          </div>
-
-          {message.attachment.subtitle && (
-            <p className="text-xs sm:text-sm text-zinc-400 mb-3 font-sans">
-              {message.attachment.subtitle}
-            </p>
+          {/* Title if any */}
+          {message.title && (
+            <h4 className="mt-1 text-sm font-semibold text-cyan-300/90 tracking-tight">
+              {message.title}
+            </h4>
           )}
 
-          {message.attachment.metricValue && (
-            <div className="flex items-baseline gap-3 pt-2.5 border-t border-zinc-900">
-              <span className="text-2xl font-mono font-bold text-amber-400 tabular-nums">
-                {message.attachment.metricValue}
-              </span>
-              {message.attachment.metricLabel && (
-                <span className="text-xs text-zinc-400">
-                  {message.attachment.metricLabel}
+          {/* Text Content */}
+          <p className="mt-1 text-sm text-zinc-300 leading-relaxed font-normal whitespace-pre-line">
+            {message.content}
+          </p>
+
+          {/* Attachment Preview (if any) */}
+          {message.attachment && (
+            <div className="mt-3 rounded-lg bg-[#080b12] border border-white/[0.06] p-3 transition-colors hover:border-cyan-500/30">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-xs font-semibold text-zinc-200">
+                  {message.attachment.title}
                 </span>
-              )}
-              {message.attachment.metricChange && (
-                <span className="text-xs font-semibold text-emerald-400 flex items-center gap-1 ml-auto">
-                  <TrendingUp className="w-3.5 h-3.5" />
-                  {message.attachment.metricChange}
-                </span>
-              )}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Action Bar: Clean, uncluttered action buttons */}
-      <div className="mt-4 pt-3 border-t border-zinc-800/80 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          {/* Boost Button */}
-          <button
-            onClick={handleBoostToggle}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-150 cursor-pointer ${
-              boosted
-                ? 'bg-amber-400/15 text-amber-300 border border-amber-500/50'
-                : 'bg-zinc-900/60 text-zinc-400 border border-zinc-800 hover:border-zinc-700 hover:text-zinc-200'
-            }`}
-            title="Boost Dispatch"
-          >
-            <Sparkles
-              className={`w-3.5 h-3.5 ${
-                boosted ? 'text-amber-400 fill-amber-400' : 'text-zinc-400'
-              }`}
-            />
-            <span>{boosted ? 'Boosted' : 'Boost'}</span>
-            <span className="tabular-nums font-semibold text-zinc-300">
-              {boostCount}
-            </span>
-          </button>
-
-          {/* Reply Button */}
-          <button
-            onClick={() => {
-              sounds.playClick();
-              setRepliesExpanded(!repliesExpanded);
-            }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium text-zinc-400 hover:text-zinc-200 bg-zinc-900/60 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 transition-colors cursor-pointer"
-          >
-            <MessageSquare className="w-3.5 h-3.5 text-zinc-400" />
-            <span>
-              {repliesExpanded ? 'Hide' : 'Replies'} ({(message.repliesCount || 0) + localReplies.length})
-            </span>
-          </button>
-        </div>
-
-        {/* Share Button */}
-        <button
-          onClick={handleCopyLink}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium text-zinc-400 hover:text-amber-300 hover:bg-zinc-900/60 border border-zinc-800 hover:border-zinc-700 transition-all cursor-pointer"
-          title="Share link"
-        >
-          {copiedLink ? (
-            <>
-              <Check className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="text-emerald-400">Copied</span>
-            </>
-          ) : (
-            <>
-              <Share2 className="w-3.5 h-3.5" />
-              <span>Share</span>
-            </>
-          )}
-        </button>
-      </div>
-
-      {/* Expanded Reply Section */}
-      {repliesExpanded && (
-        <div className="mt-3.5 pt-3 space-y-3 border-t border-zinc-800/80 animate-in fade-in duration-150">
-          {localReplies.map((reply) => (
-            <div key={reply.id} className="pl-3.5 border-l-2 border-amber-500/40 py-1 space-y-1 bg-zinc-900/40 rounded-r-xl p-2.5">
-              <div className="flex items-center gap-2 text-xs">
-                <span className="font-semibold text-zinc-200">{reply.author.name}</span>
-                <span className="text-zinc-600">·</span>
-                <span className="text-zinc-400">{reply.time}</span>
+                {message.attachment.tag && (
+                  <span className="text-[10px] text-cyan-300 font-medium px-1.5 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20">
+                    {message.attachment.tag}
+                  </span>
+                )}
               </div>
-              <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed">{reply.text}</p>
-            </div>
-          ))}
 
-          {/* Quick Reply Input */}
-          <form onSubmit={handleAddReply} className="flex items-center gap-2 pt-1">
-            <input
-              type="text"
-              value={newReplyText}
-              onChange={(e) => setNewReplyText(e.target.value)}
-              placeholder="Write a reply..."
-              className="flex-1 bg-zinc-900/80 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-zinc-200 placeholder:text-zinc-500 font-sans focus:outline-none focus:border-amber-500/50"
-            />
+              {message.attachment.subtitle && (
+                <p className="text-xs text-zinc-400 mb-2">
+                  {message.attachment.subtitle}
+                </p>
+              )}
+
+              {message.attachment.metricValue && (
+                <div className="flex items-baseline gap-2 pt-2 border-t border-zinc-800/60">
+                  <span className="text-xl font-mono font-bold text-cyan-400 tabular-nums">
+                    {message.attachment.metricValue}
+                  </span>
+                  {message.attachment.metricLabel && (
+                    <span className="text-xs text-zinc-400">
+                      {message.attachment.metricLabel}
+                    </span>
+                  )}
+                  {message.attachment.metricChange && (
+                    <span className="text-xs font-medium text-emerald-400 flex items-center gap-1 ml-auto">
+                      <TrendingUp className="w-3 h-3" />
+                      {message.attachment.metricChange}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Action Row */}
+          <div className="mt-3 flex items-center gap-2">
+            {/* Boost button */}
             <button
-              type="submit"
-              disabled={!newReplyText.trim()}
-              className="px-3.5 py-2 bg-amber-500 hover:bg-amber-400 text-black font-semibold rounded-xl text-xs transition-all disabled:opacity-30 cursor-pointer shadow-sm flex items-center gap-1.5"
+              onClick={handleBoostToggle}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                boosted
+                  ? 'bg-cyan-400/15 text-cyan-300 border border-cyan-500/40'
+                  : 'bg-zinc-800/40 text-zinc-400 border border-zinc-700/30 hover:border-zinc-600 hover:text-zinc-200 hover:bg-zinc-800/80'
+              }`}
+              title="Boost"
             >
-              <Send className="w-3 h-3" />
-              <span>Reply</span>
+              <Sparkles
+                className={`w-3 h-3 ${
+                  boosted ? 'text-cyan-400 fill-cyan-400' : 'text-zinc-400'
+                }`}
+              />
+              <span>{boosted ? 'Boosted' : 'Boost'}</span>
+              <span className="tabular-nums font-semibold text-zinc-300">
+                {boostCount}
+              </span>
             </button>
-          </form>
+
+            {/* Replies button */}
+            <button
+              onClick={() => {
+                sounds.playClick();
+                setRepliesExpanded(!repliesExpanded);
+              }}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-zinc-400 hover:text-zinc-200 bg-zinc-800/40 hover:bg-zinc-800/80 border border-zinc-700/30 hover:border-zinc-600 transition-colors cursor-pointer"
+            >
+              <MessageSquare className="w-3 h-3 text-zinc-400" />
+              <span>
+                {repliesExpanded ? 'Hide' : 'Replies'} ({(message.repliesCount || 0) + localReplies.length})
+              </span>
+            </button>
+
+            {/* Share button */}
+            <button
+              onClick={handleCopyLink}
+              className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50 transition-colors cursor-pointer ml-auto"
+              title="Share"
+            >
+              {copiedLink ? (
+                <>
+                  <Check className="w-3 h-3 text-emerald-400" />
+                  <span className="text-emerald-400">Copied</span>
+                </>
+              ) : (
+                <>
+                  <Share2 className="w-3 h-3" />
+                  <span>Share</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          {/* Reply Section */}
+          {repliesExpanded && (
+            <div className="mt-3 pt-2.5 space-y-2.5 border-t border-zinc-800/60 animate-in fade-in duration-150">
+              {localReplies.map((reply) => (
+                <div key={reply.id} className="pl-3 border-l-2 border-cyan-500/40 py-0.5 space-y-0.5">
+                  <div className="flex items-center gap-1.5 text-xs">
+                    <span className="font-semibold text-zinc-200">{reply.author.name}</span>
+                    <span className="text-zinc-600">·</span>
+                    <span className="text-zinc-500 text-[11px]">{reply.time}</span>
+                  </div>
+                  <p className="text-xs text-zinc-300 leading-relaxed">{reply.text}</p>
+                </div>
+              ))}
+
+              {/* Quick Reply Form */}
+              <form onSubmit={handleAddReply} className="flex items-center gap-2 pt-1">
+                <input
+                  type="text"
+                  value={newReplyText}
+                  onChange={(e) => setNewReplyText(e.target.value)}
+                  placeholder="Send a quick reply..."
+                  className="flex-1 bg-zinc-900/90 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs text-zinc-200 placeholder:text-zinc-500 focus:outline-none focus:border-cyan-500/40"
+                />
+                <button
+                  type="submit"
+                  disabled={!newReplyText.trim()}
+                  className="px-3 py-1.5 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold rounded-lg text-xs transition-all disabled:opacity-30 cursor-pointer flex items-center gap-1"
+                >
+                  <Send className="w-3 h-3" />
+                  <span>Reply</span>
+                </button>
+              </form>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </article>
   );
 });
+

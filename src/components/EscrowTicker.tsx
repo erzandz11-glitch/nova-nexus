@@ -45,16 +45,16 @@ export const EscrowTicker: React.FC<EscrowTickerProps> = ({ transactions, onSele
                 setSelectedTx(tx);
                 if (onSelectTx) onSelectTx(tx);
               }}
-              className="group flex items-center gap-2 hover:text-amber-300 transition-colors shrink-0 cursor-pointer"
+              className="group flex items-center gap-2 hover:text-cyan-300 transition-colors shrink-0 cursor-pointer"
             >
               <span className="text-xs text-zinc-500 font-mono">[{tx.timestamp}]</span>
               <span className="text-zinc-300 font-semibold">{tx.dealType}</span>
-              <span className="text-amber-400 font-bold tabular-nums">
+              <span className="text-cyan-400 font-bold tabular-nums">
                 {formatCurrency(tx.amount)}
               </span>
               <span className="text-zinc-600">→</span>
               <span className="text-zinc-400 max-w-[140px] truncate">{tx.recipient}</span>
-              <span className="text-xs font-mono px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-400 group-hover:border-amber-500/40 group-hover:text-amber-400">
+              <span className="text-xs font-mono px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-400 group-hover:border-cyan-500/40 group-hover:text-cyan-400">
                 {tx.nodeLocation}
               </span>
             </button>
@@ -63,7 +63,7 @@ export const EscrowTicker: React.FC<EscrowTickerProps> = ({ transactions, onSele
 
         {/* Right Active Network Info */}
         <div className="hidden lg:flex items-center gap-2 px-3 shrink-0 h-full bg-[#08080a] border-l border-zinc-900 text-zinc-400 text-xs">
-          <Activity className="w-3.5 h-3.5 text-amber-500/80" />
+          <Activity className="w-3.5 h-3.5 text-cyan-500/80" />
           <span>Throughput: 8,420 Tx/sec</span>
           <span className="text-zinc-700">·</span>
           <span>Latency: 11ms</span>
@@ -73,10 +73,10 @@ export const EscrowTicker: React.FC<EscrowTickerProps> = ({ transactions, onSele
       {/* Transaction Details Modal */}
       {selectedTx && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-2xl animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md bg-[#0a0a0d] border border-amber-500/30 rounded-2xl p-6 shadow-2xl space-y-4">
+          <div className="relative w-full max-w-md bg-[#0a0a0d] border border-cyan-500/30 rounded-2xl p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-zinc-900 pb-3">
-              <span className="text-xs font-mono uppercase tracking-widest text-amber-400 flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+              <span className="text-xs font-mono uppercase tracking-widest text-cyan-400 flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
                 Verified Escrow Proof
               </span>
               <button
@@ -90,7 +90,7 @@ export const EscrowTicker: React.FC<EscrowTickerProps> = ({ transactions, onSele
             <div className="space-y-3 text-xs font-mono">
               <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800 space-y-1">
                 <span className="text-xs text-zinc-400 uppercase">Settlement Value</span>
-                <div className="text-2xl font-bold text-amber-400 tabular-nums">
+                <div className="text-2xl font-bold text-cyan-400 tabular-nums">
                   {formatCurrency(selectedTx.amount)}
                 </div>
                 <div className="text-xs text-emerald-400 flex items-center gap-1">
@@ -113,7 +113,7 @@ export const EscrowTicker: React.FC<EscrowTickerProps> = ({ transactions, onSele
               <div className="p-2.5 rounded-lg bg-zinc-900/50 border border-zinc-800/80 text-xs space-y-1">
                 <div className="flex justify-between">
                   <span className="text-zinc-500">Transaction Hash</span>
-                  <span className="text-amber-400 font-mono">{selectedTx.txHash}</span>
+                  <span className="text-cyan-400 font-mono">{selectedTx.txHash}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-zinc-500">Sender Escrow</span>
